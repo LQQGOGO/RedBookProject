@@ -1,3 +1,3 @@
 <template>
-  购物车
+  发现
 </template>

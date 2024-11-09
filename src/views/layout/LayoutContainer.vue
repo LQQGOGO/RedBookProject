@@ -1,5 +1,10 @@
+<script setup>
+import HeaderComponent from '@/components/HeaderComponent.vue';
+</script>
+
 <template>
   <div>
-    <router-view></router-view>
+    <HeaderComponent></HeaderComponent>
+
   </div>
 </template>

@@ -1,0 +1,55 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+em,
+i {
+    font-style: normal;
+}
+
+li {
+    list-style: none;
+}
+
+img {
+    /* 照顾低版本浏览器 如果图片外面包含了链接会有边框问题 */
+    border: 0;
+    /* 取消图片地测空白缝隙 */
+    vertical-align: middle;
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+button,
+input {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    /* 默认灰色边框去掉 */
+    border: 0;
+    outline: none;
+}
+
+body {
+    background-color: #fff;
+    font: .16rem/1.5 Microsoft YaHei, Heiti SC, tahoma, arial, Hiragino Sans GB;
+    color: #666;
+}
+
+.hide,
+.none {
+    display: none;
+}
+
+.clearfix::after {
+    content: "";
+    display: table;
+    clear: both;
+}

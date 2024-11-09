@@ -1,3 +1,3 @@
 <template>
-  搜索页
+  搜索
 </template>

@@ -8,42 +8,25 @@ const router = createRouter({
     {
       path: '/',
       component: () => import('@/views/layout/LayoutContainer.vue'),
-      redirect: '/home',
+      redirect: '/explore',
       children: [
         {
-          path: 'home',
-          component: () => import('@/views/layout/HomePage.vue')
+          path: 'explore',
+          component: () => import('@/views/layout/ExplorePage.vue')
         },
         {
-          path: 'sort',
-          component: () => import('@/views/layout/SortPage.vue')
+          path: 'notificition',
+          component: () => import('@/views/layout/NotificationPage.vue')
         },
         {
-          path: 'shoppingcar',
-          component: () => import('@/views/layout/ShoppingCar.vue')
-        },
-        { path: 'user', component: () => import('@/views/layout/UserPage.vue') }
+          path: 'user',
+          component: () => import('@/views/layout/UserPage.vue')
+        }
       ]
     },
     {
       path: '/search',
       component: () => import('@/views/search/SearchPage.vue')
-    },
-    {
-      path: '/searchlist',
-      component: () => import('@/views/search/SearchList.vue')
-    },
-    {
-      path: '/prodetail/:id',
-      component: () => import('@/views/prodetail/ProDetail.vue')
-    },
-    {
-      path: '/pay',
-      component: () => import('@/views/pay/PayPage.vue')
-    },
-    {
-      path: '/myorder',
-      component: () => import('@/views/myorder/MyOrder.vue')
     }
   ]
 })
