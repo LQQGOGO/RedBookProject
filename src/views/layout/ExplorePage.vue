@@ -1,16 +1,62 @@
 <script setup>
-import ArticleItem  from '@/components/ArticleItem.vue'
-import {ref} from 'vue'
-const item= ref({
-  cover: 'https://sns-webpic-qc.xhscdn.com/202411120903/e887c7f50f43d71abfeaead743b63305/1040g0083194nee4154005o9j8tenvbs4bo9kq0g!nc_n_webp_mw_1',
-  title: '西安这个叫什么？？好吃死了他马的。。。',
-  avatar: 'https://sns-avatar-qc.xhscdn.com/avatar/6710e4dcc91bf9b208a86138.jpg?imageView2/2/w/60/format/webp|imageMogr2/strip',
-  id: 'Max',
-  loves: 289
-})
+import {ref} from "vue"
+import RedBookWaterfall from './RedBookWaterfall.vue'
+import ArticleItem from '@/components/ArticleItem.vue'
+import data1 from "@/config/data1.json"
+import data2 from "@/config/data2.json"
+
+const colorArr = ["#409eff", "#67c23a", "#e6a23c", "#f56c6c", "#909399"]
+const fContainerRef = ref(null)
+const column = ref(4)
+
+const list1 = data1.data.items.map((i) => ({
+  id: i.id,
+  url: i.note_card.cover.url_pre,
+  width: i.note_card.cover.width,
+  height: i.note_card.cover.height,
+  title: i.note_card.display_title,
+  author: i.note_card.user.nickname,
+  likes: i.note_card.interact_info.liked_count,
+}));
+
+const list2 = data2.data.items.map((i) => ({
+  id: i.id,
+  url: i.note_card.cover.url_pre,
+  width: i.note_card.cover.width,
+  height: i.note_card.cover.height,
+  title: i.note_card.display_title,
+  author: i.note_card.user.nickname,
+  likes: i.note_card.interact_info.liked_count,
+}));
+const list = [...list1, ...list2]
+//将数据进行分页处理
+const getData = (page, pageSize) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(list.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize))
+    }, 1000)
+  })
+}
+
 </script>
 
 <template>
-  <ArticleItem :item="item"></ArticleItem>
-  
+  <div class="app">
+    <div class="container" ref="fContainerRef">
+      <RedBookWaterfall :bottom="20" :column="column" :gap="10" :page-size="20" :request="getData">
+        <template #item="{ item, index, imageHeight}">
+          <ArticleItem
+          :detail="{
+            imageHeight,
+            title: item.title,
+            author: item.author,
+            //这里使用颜色盒子代替图片
+            bgColor: colorArr[index % (colorArr.length - 1)],
+          }">
+          </ArticleItem>
+        </template>
+
+      </RedBookWaterfall>
+    </div>
+  </div>
 </template>
