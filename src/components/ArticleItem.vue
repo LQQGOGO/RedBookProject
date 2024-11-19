@@ -6,20 +6,18 @@ const props = defineProps({
     required: true
   }
 })
-
-console.log(props.detail)
 </script>
 <template>
   <div class="article">
     <div class="cover">
-      <img :src="detail.cover" alt="" />
+      <img :src="detail.avatar" alt="" />
     </div>
     <div class="footer">
       <div class="title">{{ detail.title }}</div>
       <div>
         <div class="user">
           <img :src="detail.avatar" alt="" />
-          {{ detail.id }}
+          {{ detail.author }}
         </div>
         <div class="loves">
           <svg
@@ -38,7 +36,7 @@ console.log(props.detail)
               p-id="4562"
             ></path>
           </svg>
-          {{ detail.loves }}
+          {{ detail.likes }}
         </div>
       </div>
     </div>
@@ -46,6 +44,14 @@ console.log(props.detail)
 </template>
 
 <style scoped>
+.fs-book-card-image {
+  width: 100%;
+  height: v-bind('`${props.detail.imageHeight}px`');
+  border: 1px solid #eee;
+  border-radius: 20px;
+  background-color: v-bind('props.detail.bgColor');
+  font-size: 50px;
+}
 .cover img {
   width: 300px;
   height: auto;

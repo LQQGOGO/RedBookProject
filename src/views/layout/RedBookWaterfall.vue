@@ -8,7 +8,28 @@ import {
   defineProps
 } from 'vue'
 import { debounce, rafThrottle } from '@/utils/tools'
-const props = defineProps()
+const props = defineProps({
+  request: {
+    type: Function,
+    required: true // 确保父组件必须提供一个函数
+  },
+  column: {
+    type: Number,
+    default: 4
+  },
+  gap: {
+    type: Number,
+    default: 10
+  },
+  pageSize: {
+    type: Number,
+    default: 20
+  },
+  bottom: {
+    type: Number,
+    default: 20
+  }
+})
 defineSlots()
 const containerRef = ref(null)
 const listRef = ref(null)
@@ -156,9 +177,42 @@ onUnmounted(() => {
 <template>
   <div class="waterfall-container" ref="containerRef" @scroll="handleScroll">
     <div class="waterfall-list" ref="listRef">
-      <div class="waterfall-item">
-        <slot name="item" :item="item" :index="index"></slot>
+      <div
+        class="waterfall-item"
+        v-for="(item, index) in state.cardList"
+        :key="item.id"
+        :style="{
+          width: `${state.cardWidth}px`,
+          transform: `translate3d(${state.cardPos[index].x}px, ${state.cardPos[index].y}px, 0)`,
+        }"
+      >
+        <slot
+          name="item"
+          :item="item"
+          :index="index"
+          :imageHeight="state.cardPos[index].imageHeight"
+        ></slot>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.waterfall-container {
+  width: 100%;
+  height: 100vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.waterfall-list {
+  width: 100%;
+  position: relative;
+}
+.waterfall-item {
+  position: absolute;
+  left: 0;
+  top: 0;
+  box-sizing: border-box;
+  transition: all 0.2s;
+}
+</style>

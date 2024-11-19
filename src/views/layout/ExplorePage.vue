@@ -17,6 +17,7 @@ const list1 = data1.data.items.map((i) => ({
   title: i.note_card.display_title,
   author: i.note_card.user.nickname,
   likes: i.note_card.interact_info.liked_count,
+  avatar: i.note_card.user.avatar,
 }));
 
 const list2 = data2.data.items.map((i) => ({
@@ -27,6 +28,7 @@ const list2 = data2.data.items.map((i) => ({
   title: i.note_card.display_title,
   author: i.note_card.user.nickname,
   likes: i.note_card.interact_info.liked_count,
+  avatar: i.note_card.user.avatar,
 }));
 const list = [...list1, ...list2]
 //将数据进行分页处理
@@ -50,6 +52,9 @@ const getData = (page, pageSize) => {
             imageHeight,
             title: item.title,
             author: item.author,
+            likes: item.likes,
+            cover: item.url,
+            avatar: item.avatar,
             //这里使用颜色盒子代替图片
             bgColor: colorArr[index % (colorArr.length - 1)],
           }">
