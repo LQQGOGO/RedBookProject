@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
-export const codeLogin = async (username, password) => {
+export const codeRegist = async (username, password) => {
   try {
     const response = await request.post(
-      '/api/login',
+      '/api/regist',
       {
         username: username,
         password: password

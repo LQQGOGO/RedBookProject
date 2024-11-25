@@ -5,7 +5,7 @@
     @scroll="onScroll"
     :style="{ height: containerHeight + 'px', overflowY: 'auto' }"
   >
-    <div :style="{ height: totalHeight + 'px', position: 'relative' }">
+    <div :style="{ position: 'relative' }">
       <div
         v-for="(item, index) in visibleData"
         :key="item.id"
@@ -22,7 +22,7 @@
 export default {
   data() {
     return {
-      items: Array.from({ length: 100 }).map((_, index) => ({
+      items: Array.from({ length: 10000 }).map((_, index) => ({
         id: index,
         text: `Item ${index + 1}`,
         height: Math.floor(Math.random() * 50) + 50, // 每个item的高度随机（50px到100px之间）

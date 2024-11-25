@@ -1,32 +1,33 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { codeLogin } from '@/api/login'
+import { codeRegist } from '@/api/regist'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { User, Lock } from '@element-plus/icons-vue';
+import { User, Lock } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
-const isRegister = ref(false)
+let isRegister = ref(false)
 const router = useRouter()
 const userStore = useUserStore()
 const formModel = ref({
-  mobile: '',
-  smsCode: '',
-  resmsCode: ''
+  username: '',
+  password: '',
+  repassword: ''
 })
 const rules = {
-  mobile: [
-    { required: true, message: '请输入手机号', trigger: 'blur' },
-    { min: 11, max: 11, message: '请输入正确的手机号', trigger: 'blur' }
+  username: [
+    { required: true, message: '请输入账号', trigger: 'blur' },
+    { min: 1, max: 10, message: '请输入正确的账号', trigger: 'blur' }
   ],
-  smsCode: [
-    { required: true, message: '请输入验证码', trigger: 'blur' },
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
     {
       pattern: /^\S{6}$/,
-      message: '验证码不符合规则',
+      message: '密码不符合规则',
       trigger: 'blur'
     }
   ],
-  resmsCode: [
+  repassword: [
     { required: true, message: '请再次输入密码', trigger: 'blur' },
     {
       pattern: /^\S{6,15}$/,
@@ -35,7 +36,7 @@ const rules = {
     },
     {
       validator: (rule, value, callback) => {
-        if (value !== formModel.value.smsCode) {
+        if (value !== formModel.value.password) {
           callback(new Error('两次输入密码不一致!'))
         } else {
           callback()
@@ -47,15 +48,40 @@ const rules = {
 }
 const form = ref()
 const register = async () => {
-  await form.value.validate()
+  try {
+    const isValid = await form.value.validate()
+    if (!isValid) {
+      ElMessage.error('验证失败，请检查输入')
+      return
+    }
 
-  //开始注册请求
+    // 执行登录请求，并捕获请求中的任何异常
+    const response = await codeRegist(
+      formModel.value.username,
+      formModel.value.password
+    )
+    // 检查响应状态是否为 200
+    if (response.status === 200) {
+      ElMessage.success(response.message || '注册成功')
+      setInterval(() => {
+        isRegister.value = false
+      }, 1000)
+    } else {
+      // 若 status 不为 200，则显示错误消息
+      ElMessage.error(response.message || '注册失败')
+    }
+  } catch (error) {
+    // 捕获任何未捕获的错误，并显示错误信息
+    ElMessage.error(`请求失败：${error.message || '请稍后重试'}`)
+    console.error('注册过程中的错误:', error)
+    console.error('错误的详细信息:', JSON.stringify(error))
+  }
 }
 watch(isRegister, () => {
   formModel.value = {
-    mobile: '',
-    smsCode: '',
-    resmsCode: ''
+    username: '',
+    password: '',
+    repassword: ''
   }
 })
 
@@ -68,10 +94,13 @@ const login = async () => {
     }
 
     // 执行登录请求，并捕获请求中的任何异常
-    const response = await codeLogin(formModel.value.mobile, formModel.value.smsCode)
+    const response = await codeLogin(
+      formModel.value.username,
+      formModel.value.password
+    )
     // 检查响应状态是否为 200
     if (response.status === 200) {
-      const token = response.data.data.token
+      const token = response.data.token
       // 将 token 和 userId 存储在 localStorage 中
       //console.log(token);
 
@@ -106,27 +135,27 @@ const login = async () => {
         <el-form-item>
           <h1>注册</h1>
         </el-form-item>
-        <el-form-item prop="mobile">
+        <el-form-item prop="username">
           <el-input
-            v-model="formModel.mobile"
+            v-model="formModel.username"
             :prefix-icon="User"
-            placeholder="请输入手机号"
+            placeholder="请输入账号"
           ></el-input>
         </el-form-item>
-        <el-form-item prop="smsCode">
+        <el-form-item prop="password">
           <el-input
-            v-model="formModel.smsCode"
+            v-model="formModel.password"
             :prefix-icon="Lock"
-            type="smsCode"
-            placeholder="请输入验证码"
+            type="password"
+            placeholder="请输入密码"
           ></el-input>
         </el-form-item>
-        <el-form-item prop="resmsCode">
+        <el-form-item prop="repassword">
           <el-input
-            v-model="formModel.resmsCode"
+            v-model="formModel.repassword"
             :prefix-icon="Lock"
-            type="smsCode"
-            placeholder="请输入再次验证码"
+            type="password"
+            placeholder="请再次输入密码"
           ></el-input>
         </el-form-item>
         <el-form-item>
@@ -156,20 +185,20 @@ const login = async () => {
         <el-form-item>
           <h1>登录</h1>
         </el-form-item>
-        <el-form-item prop="mobile">
+        <el-form-item prop="username">
           <el-input
-            v-model="formModel.mobile"
+            v-model="formModel.username"
             :prefix-icon="User"
-            placeholder="请输入手机号"
+            placeholder="请输入账号"
           ></el-input>
         </el-form-item>
-        <el-form-item prop="smsCode">
+        <el-form-item prop="password">
           <el-input
-            v-model="formModel.smsCode"
-            name="smsCode"
+            v-model="formModel.password"
+            name="password"
             :prefix-icon="Lock"
-            type="smsCode"
-            placeholder="请输入验证码"
+            type="password"
+            placeholder="请输入密码"
           ></el-input>
         </el-form-item>
         <el-form-item class="flex">

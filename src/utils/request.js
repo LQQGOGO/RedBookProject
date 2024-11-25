@@ -2,7 +2,7 @@ import { useUserStore } from '@/stores/user'
 import axios from 'axios'
 import router from '@/router'
 import { ElMessage } from 'element-plus'
-const baseURL = 'http://smart-shop.itheima.net/index.php?s=/api'
+const baseURL = 'http://127.0.0.1:3007'
 
 //配置基地址，超时时间
 const instance = axios.create({
