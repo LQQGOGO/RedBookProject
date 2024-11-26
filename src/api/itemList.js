@@ -4,7 +4,8 @@ export const getItemList = async () => {
   try {
     const response = await request.get('/item/item_list', {
       headers: {
-        platform: 'H5'
+        platform: 'H5',
+        timeout: 5000
       }
     })
     return response // 确保返回响应
