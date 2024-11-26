@@ -3,12 +3,13 @@ import { ref, onMounted } from 'vue'
 import RedBookWaterfall from './RedBookWaterfall.vue'
 import ArticleItem from '@/components/ArticleItem.vue'
 import { getItemList } from '@/api/itemList'
+// import { rafThrottle } from '@/utils/tools'
 // import data1 from "@/config/data1.json"
 // import data2 from "@/config/data2.json"
 
 const colorArr = ['#409eff', '#67c23a', '#e6a23c', '#f56c6c', '#909399']
 const fContainerRef = ref(null)
-const column = ref(4)
+const column = ref(5)
 
 // const list1 = data1.data.items.map((i) => ({
 //   id: i.id,
@@ -66,6 +67,17 @@ const getData = (page, pageSize) => {
     }, 1000)
   })
 }
+
+//给探索页添加滚动事件监听
+// const fcontainerRef = ref(null)
+// const fbottom = ref(20)
+// const handleScroll = rafThrottle(() => {
+//   const { scrollTop, clientHeight, scrollHeight } = fcontainerRef.value
+//   const bottom = scrollHeight - clientHeight - scrollTop
+//   if (bottom <= fbottom.value) {
+//     getCardList(state.value.page, props.pageSize)
+//   }
+// })
 </script>
 
 <template>
@@ -74,14 +86,16 @@ const getData = (page, pageSize) => {
       <RedBookWaterfall
         :bottom="20"
         :column="column"
-        :gap="10"
+        :gap="20"
         :page-size="20"
         :request="getData"
+        ref="flistRef"
       >
-        <template #item="{ item, index, imageHeight }">
+        <template #item="{ item, index, imageHeight, width }">
           <ArticleItem
             :detail="{
               imageHeight,
+              width,
               title: item.title,
               author: item.author,
               likes: item.likes,

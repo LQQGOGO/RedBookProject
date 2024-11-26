@@ -183,7 +183,7 @@ onUnmounted(() => {
         :key="item.id"
         :style="{
           width: `${state.cardWidth}px`,
-          transform: `translate3d(${state.cardPos[index].x}px, ${state.cardPos[index].y}px, 0)`,
+          transform: `translate3d(${state.cardPos[index].x}px, ${state.cardPos[index].y}px, 0)`
         }"
       >
         <slot
@@ -191,6 +191,7 @@ onUnmounted(() => {
           :item="item"
           :index="index"
           :imageHeight="state.cardPos[index].imageHeight"
+          :width="state.cardPos[index].width"
         ></slot>
       </div>
     </div>

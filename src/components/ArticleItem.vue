@@ -44,27 +44,19 @@ const props = defineProps({
 </template>
 
 <style scoped>
-.fs-book-card-image {
-  width: 100%;
-  height: v-bind('`${props.detail.imageHeight}px`');
-  border: 1px solid #eee;
-  border-radius: 20px;
-  background-color: v-bind('props.detail.bgColor');
-  font-size: 50px;
-}
 .cover img {
-  width: 300px;
+  width: v-bind('`${props.detail.width}px`');
   height: auto;
   border-radius: 20px;
 }
 .title {
-  width: 300px;
+  width: v-bind('`${props.detail.width}px`');
   font-size: 18px;
   padding: 10px;
   color: black;
 }
 .footer {
-  width: 300px;
+  width: v-bind('`${props.detail.width}px`');
 }
 .user {
   float: left;
