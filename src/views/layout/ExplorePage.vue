@@ -89,9 +89,10 @@ const getData = (page, pageSize) => {
         :gap="20"
         :page-size="20"
         :request="getData"
+        :enter-size="column * 2"
         ref="flistRef"
       >
-        <template #item="{ item, index, imageHeight, width }">
+        <template #item="{ item, imageHeight, width }">
           <ArticleItem
             :detail="{
               imageHeight,

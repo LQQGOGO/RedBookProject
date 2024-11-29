@@ -45,18 +45,18 @@ const props = defineProps({
 
 <style scoped>
 .cover img {
-  width: v-bind('`${props.detail.width}px`');
-  height: auto;
+  width: 100%;
+  height: v-bind('`${props.detail.imageHeight}px`');
   border-radius: 20px;
 }
 .title {
-  width: v-bind('`${props.detail.width}px`');
+  width: 100%;
   font-size: 18px;
   padding: 10px;
   color: black;
 }
 .footer {
-  width: v-bind('`${props.detail.width}px`');
+  width: 100%;
 }
 .user {
   float: left;
