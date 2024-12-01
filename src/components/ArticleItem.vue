@@ -10,11 +10,11 @@ const props = defineProps({
 <template>
   <div class="article">
     <div class="cover">
-      <img :src="detail.avatar" alt="" />
+      <img :src="detail.cover" alt="" />
     </div>
     <div class="footer">
       <div class="title">{{ detail.title }}</div>
-      <div>
+      <div class="nickname">
         <div class="user">
           <img :src="detail.avatar" alt="" />
           {{ detail.author }}
@@ -54,6 +54,9 @@ const props = defineProps({
   font-size: 18px;
   padding: 10px;
   color: black;
+}
+.nickname {
+  height: 30px;
 }
 .footer {
   width: 100%;

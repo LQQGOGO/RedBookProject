@@ -111,7 +111,7 @@ const setItemSize = () => {
     const rect = itemSizeInfo.value.get(current.id)
     pre.set(current.id, {
       width: itemWidth,
-      height: rect ? rect.height : 0,
+      height: rect ? rect.height : itemWidth * 0.75,
       imageHeight: Math.floor((itemWidth * current.height) / current.width)
     })
     return pre
@@ -256,6 +256,8 @@ const init = async () => {
   const len = await loadDataList()
   setItemSize()
   len && mountTemporaryList(len)
+  console.log(renderList);
+
 }
 
 // 在组件挂载时初始化
