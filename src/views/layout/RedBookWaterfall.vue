@@ -36,7 +36,9 @@ const containerRef = ref(null)
 
 // 监听容器大小变化
 const resizeObserver = new ResizeObserver(() => {
-  handleResize()
+  if (containerRef.value) {
+    handleResize()
+  }
 })
 
 // 组件状态管理
@@ -261,16 +263,23 @@ const mountTemporaryList = (size = props.enterSize) => {
 
 // 初始化滚动状态
 const initScrollState = () => {
+  if (!containerRef.value) return
   scrollState.viewWidth = containerRef.value.clientWidth
   scrollState.viewHeight = containerRef.value.clientHeight
-  scrollState.start = containerRef.value.scrollTop
+  scrollState.start = containerRef.value.scrollTop || 0
 }
 
 // 初始化组件
 const init = async () => {
+  await nextTick() // 等待 DOM 完全挂载
+  if (!containerRef.value) {
+    console.error('Container element is missing')
+    return
+  }
   initScrollState()
-  // 如果有传入的初始状态，恢复状态
+
   if (props.initialState.list.length > 0) {
+    // 恢复状态
     dataState.list = props.initialState.list
     dataState.currentPage = props.initialState.currentPage
     containerRef.value.scrollTop = props.initialState.scrollTop
@@ -280,24 +289,28 @@ const init = async () => {
     // 正常加载逻辑
     resizeObserver.observe(containerRef.value)
     const len = await loadDataList()
-    setItemSize()
-    len && mountTemporaryList(len)
+    if (len) {
+      setItemSize()
+      mountTemporaryList(len)
+    }
   }
 }
 
 // 在组件挂载时初始化
-onMounted(() => {
+onMounted(async () => {
+  await nextTick() // 等待 DOM 完全挂载
   init()
 })
 
 // 在组件卸载时清理
 onUnmounted(() => {
-  resizeObserver.unobserve(containerRef.value)
-
+  if (containerRef.value) {
+    resizeObserver.unobserve(containerRef.value)
+  }
   emit('saveState', {
     currentPage: dataState.currentPage,
     list: dataState.list,
-    scrollTop: containerRef.value.scrollTop
+    scrollTop: containerRef.value ? containerRef.value.scrollTop : 0
   })
 })
 </script>
