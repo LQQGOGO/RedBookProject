@@ -7,9 +7,12 @@
   </div>
 </template>
 
-<style scoped>
+<style>
 .w {
   width: 1750px;
   margin: 0 auto;
+}
+body::-webkit-scrollbar {
+  display: none;
 }
 </style>

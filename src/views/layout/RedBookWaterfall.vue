@@ -274,6 +274,17 @@ const initScrollState = () => {
   scrollState.start = containerRef.value.scrollTop || 0
 }
 
+//设置全局滚动状态
+// const handleGlobalWheel = rafThrottle((event) => {
+//   if (!containerRef.value) return
+
+//   const container = containerRef.value
+//   const scrollAmount = event.deltaY
+
+//   // 修改容器的 scrollTop 来控制滚动
+//   container.scrollTop += scrollAmount
+// })
+
 // 初始化组件
 const init = async () => {
   await nextTick() // 等待 DOM 完全挂载
@@ -310,6 +321,8 @@ onMounted(async () => {
   if (itemStore.notes.length == 0) {
     init()
   }
+  // 监听全局的 wheel 事件
+  // window.addEventListener('wheel', handleGlobalWheel)
 })
 
 // 在组件卸载时清理
@@ -320,6 +333,9 @@ onUnmounted(() => {
 
   // 清除仓库状态
   // itemStore.clearData()
+
+  // 移除事件监听
+  // window.removeEventListener('wheel', handleGlobalWheel)
 })
 
 onActivated(async () => {
@@ -380,8 +396,11 @@ onActivated(async () => {
 .fs-virtual-waterfall-container {
   width: 100%;
   height: 90vh;
-  overflow-y: scroll;
-  overflow-x: hidden;
+  overflow: scroll;
+}
+/* 隐藏滚动条 */
+.fs-virtual-waterfall-container::-webkit-scrollbar {
+  display: none;
 }
 .fs-virtual-waterfall-list {
   width: 100%;
