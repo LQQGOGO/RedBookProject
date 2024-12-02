@@ -6,9 +6,13 @@ import {
   onUnmounted,
   reactive,
   ref,
-  watch
+  watch,
+  defineEmits
 } from 'vue'
 import { debounce, rafThrottle } from '@/utils/tools'
+
+// 定义可以触发的事件
+const emit = defineEmits(['updateScrollTop', 'saveState'])
 
 // 定义组件的 props 属性
 const props = defineProps({
@@ -16,7 +20,15 @@ const props = defineProps({
   gap: { type: Number, default: 10 }, // 每列之间的间距
   pageSize: { type: Number, default: 20 }, // 每页请求的数据量
   enterSize: { type: Number, default: 20 }, // 每次加载的条目数量
-  request: { type: Function, required: true } // 请求数据的函数
+  request: { type: Function, required: true }, // 请求数据的函数
+  initialState: {
+    type: Object,
+    default: () => ({
+      currentPage: 1,
+      list: [],
+      scrollTop: 0
+    })
+  }
 })
 
 // DOM 引用
@@ -181,6 +193,10 @@ const loadDataList = async () => {
 const handleScroll = rafThrottle(() => {
   const { scrollTop, clientHeight } = containerRef.value
   scrollState.start = scrollTop
+
+  // 触发外部事件，通知滚动位置
+  emit('updateScrollTop', scrollTop)
+
   if (!dataState.loading && !hasMoreData.value) {
     loadDataList().then(len => {
       len && setItemSize()
@@ -188,6 +204,7 @@ const handleScroll = rafThrottle(() => {
     })
     return
   }
+
   if (scrollTop + clientHeight > computedHeight.value.minHeight) {
     mountTemporaryList()
   }
@@ -252,12 +269,20 @@ const initScrollState = () => {
 // 初始化组件
 const init = async () => {
   initScrollState()
-  resizeObserver.observe(containerRef.value)
-  const len = await loadDataList()
-  setItemSize()
-  len && mountTemporaryList(len)
-  console.log(renderList);
-
+  // 如果有传入的初始状态，恢复状态
+  if (props.initialState.list.length > 0) {
+    dataState.list = props.initialState.list
+    dataState.currentPage = props.initialState.currentPage
+    containerRef.value.scrollTop = props.initialState.scrollTop
+    setItemSize()
+    mountTemporaryList(dataState.list.length)
+  } else {
+    // 正常加载逻辑
+    resizeObserver.observe(containerRef.value)
+    const len = await loadDataList()
+    setItemSize()
+    len && mountTemporaryList(len)
+  }
 }
 
 // 在组件挂载时初始化
@@ -268,6 +293,12 @@ onMounted(() => {
 // 在组件卸载时清理
 onUnmounted(() => {
   resizeObserver.unobserve(containerRef.value)
+
+  emit('saveState', {
+    currentPage: dataState.currentPage,
+    list: dataState.list,
+    scrollTop: containerRef.value.scrollTop
+  })
 })
 </script>
 
@@ -285,7 +316,12 @@ onUnmounted(() => {
           :key="item.id"
           :style="style"
         >
-          <slot name="item" :item="item" :imageHeight="imageHeight" :width="width"></slot>
+          <slot
+            name="item"
+            :item="item"
+            :imageHeight="imageHeight"
+            :width="width"
+          ></slot>
         </div>
       </div>
 
@@ -295,7 +331,12 @@ onUnmounted(() => {
           :key="item.id"
           :style="style"
         >
-          <slot name="item" :item="item" :imageHeight="imageHeight" :width="width"></slot>
+          <slot
+            name="item"
+            :item="item"
+            :imageHeight="imageHeight"
+            :width="width"
+          ></slot>
         </div>
       </div>
     </div>
@@ -305,7 +346,7 @@ onUnmounted(() => {
 <style scoped>
 .fs-virtual-waterfall-container {
   width: 100%;
-  height: 100vh;
+  height: 90vh;
   overflow-y: scroll;
   overflow-x: hidden;
 }
