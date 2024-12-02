@@ -7,12 +7,10 @@ import {
   reactive,
   ref,
   watch,
-  defineEmits
+  onActivated
 } from 'vue'
 import { debounce, rafThrottle } from '@/utils/tools'
-
-// 定义可以触发的事件
-const emit = defineEmits(['updateScrollTop', 'saveState'])
+import { useItemStore } from '@/stores/itemList';
 
 // 定义组件的 props 属性
 const props = defineProps({
@@ -30,6 +28,9 @@ const props = defineProps({
     })
   }
 })
+
+//定义初始化状态
+const itemStore = useItemStore()
 
 // DOM 引用
 const containerRef = ref(null)
@@ -186,9 +187,13 @@ const loadDataList = async () => {
     dataState.isFinish = true
     return
   }
-  dataState.list.push(...list)
+  // 去重操作
+  const existingIds = new Set(dataState.list.map(item => item.id))
+  // 过滤掉已经存在的项
+  const uniqueList = list.filter(newItem => !existingIds.has(newItem.id))
+  dataState.list.push(...uniqueList)
   dataState.loading = false
-  return list.length
+  return uniqueList.length
 }
 
 // 滚动事件处理，加载更多内容
@@ -196,8 +201,8 @@ const handleScroll = rafThrottle(() => {
   const { scrollTop, clientHeight } = containerRef.value
   scrollState.start = scrollTop
 
-  // 触发外部事件，通知滚动位置
-  emit('updateScrollTop', scrollTop)
+  // 将滚动位置存入仓库
+  itemStore.saveScrollTop(scrollTop ? scrollTop : 0)
 
   if (!dataState.loading && !hasMoreData.value) {
     loadDataList().then(len => {
@@ -273,16 +278,13 @@ const initScrollState = () => {
 const init = async () => {
   await nextTick() // 等待 DOM 完全挂载
   if (!containerRef.value) {
-    console.error('Container element is missing')
+    console.error('获取容器失败')
     return
   }
   initScrollState()
 
-  if (props.initialState.list.length > 0) {
+  if (dataState.list.length > 0) {
     // 恢复状态
-    dataState.list = props.initialState.list
-    dataState.currentPage = props.initialState.currentPage
-    containerRef.value.scrollTop = props.initialState.scrollTop
     setItemSize()
     mountTemporaryList(dataState.list.length)
   } else {
@@ -294,12 +296,20 @@ const init = async () => {
       mountTemporaryList(len)
     }
   }
+  // 恢复滚动位置，确保在DOM渲染之后执行
+  nextTick(() => {
+    if (itemStore.scrollTop) {
+      containerRef.value.scrollTop = itemStore.scrollTop
+    }
+  })
+
 }
 
 // 在组件挂载时初始化
 onMounted(async () => {
-  await nextTick() // 等待 DOM 完全挂载
-  init()
+  if (itemStore.notes.length == 0) {
+    init()
+  }
 })
 
 // 在组件卸载时清理
@@ -307,12 +317,22 @@ onUnmounted(() => {
   if (containerRef.value) {
     resizeObserver.unobserve(containerRef.value)
   }
-  emit('saveState', {
-    currentPage: dataState.currentPage,
-    list: dataState.list,
-    scrollTop: containerRef.value ? containerRef.value.scrollTop : 0
-  })
+
+  // 清除仓库状态
+  // itemStore.clearData()
 })
+
+onActivated(async () => {
+  await nextTick() // 等待 DOM 完全挂载
+
+  // 恢复列表数据
+  if (itemStore.notes.length > 0) {
+    dataState.list = itemStore.notes
+    init()
+  }
+});
+
+
 </script>
 
 <template>

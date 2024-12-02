@@ -16,13 +16,27 @@ export const useItemStore = defineStore(
 
     const notes = ref([])
     const appendNotes = newItems => {
-      notes.value = [...notes.value, ...newItems]
+      // 去重：只添加没有存在过的项
+      const uniqueItems = newItems.filter(
+        newItem =>
+          !notes.value.some(existingItem => existingItem.id === newItem.id)
+      )
+      notes.value = [...notes.value, ...uniqueItems]
     }
 
     const isFinish = ref(false)
     const saveIsfinish = t => {
       isFinish.value = t
     }
+
+    // 清除仓库数据
+    const clearData = () => {
+      scrollTop.value = 0
+      currentPage.value = 0
+      notes.value = []
+      isFinish.value = false
+    }
+
     return {
       scrollTop,
       saveScrollTop,
@@ -31,7 +45,8 @@ export const useItemStore = defineStore(
       notes,
       appendNotes,
       isFinish,
-      saveIsfinish
+      saveIsfinish,
+      clearData
     }
   },
   {

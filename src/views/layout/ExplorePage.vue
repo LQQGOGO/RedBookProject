@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref } from 'vue'
 import RedBookWaterfall from './RedBookWaterfall.vue'
 import ArticleItem from '@/components/ArticleItem.vue'
 import { getItemList } from '@/api/itemList'
@@ -29,25 +29,6 @@ const getData = async (page, pageSize) => {
   itemStore.appendNotes(newData) // 追加到全局状态
   return newData
 }
-
-// 恢复滚动位置
-onMounted(() => {
-  if (fContainerRef.value) {
-    fContainerRef.value.scrollTop = itemStore.scrollTop // 恢复滚动位置
-  }
-})
-
-// 保存滚动位置
-const saveScrollPosition = () => {
-  if (fContainerRef.value) {
-    itemStore.saveScrollTop(fContainerRef.value.scrollTop)
-  }
-}
-
-// 页面卸载时保存状态
-onBeforeUnmount(() => {
-  saveScrollPosition()
-})
 
 </script>
 
