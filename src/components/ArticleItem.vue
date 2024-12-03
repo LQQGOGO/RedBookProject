@@ -10,7 +10,7 @@ const props = defineProps({
 <template>
   <div class="article">
     <div class="cover">
-      <img :src="detail.cover" alt="" />
+      <img :src="detail.cover" :style="{ height: `${detail.imageHeight}px` }" alt="" />
     </div>
     <div class="footer">
       <div class="title">{{ detail.title }}</div>
@@ -44,10 +44,34 @@ const props = defineProps({
 </template>
 
 <style scoped>
+.cover {
+  position: relative;
+  display: inline-block;
+  width: 100%; /* 根据需求调整 */
+  border-radius: 20px;
+  overflow: hidden;
+}
+
 .cover img {
   width: 100%;
-  height: v-bind('`${props.detail.imageHeight}px`');
+  border-radius: 20px; /* 图片圆角 */
+  transition: transform 0.3s ease; /* 悬停时图片缩放效果 */
+}
+
+.cover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0);
   border-radius: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.cover:hover::after {
+  background-color: rgba(0, 0, 0, 0.3);
 }
 .title {
   width: 100%;
