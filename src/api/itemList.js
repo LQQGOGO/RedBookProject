@@ -1,12 +1,13 @@
 import request from '@/utils/request'
 
-export const getItemList = async (page = 1, pageSize = 20) => {
+export const getItemList = async (page = 1, pageSize = 20, channel = 'recommend') => {
   try {
     const response = await request.get('/item/item_list', {
       params: {
         // 传递分页参数
         page,
-        pageSize
+        pageSize,
+        channel,
       },
       headers: {
         platform: 'H5',

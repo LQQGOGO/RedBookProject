@@ -19,14 +19,7 @@ const props = defineProps({
   pageSize: { type: Number, default: 20 }, // 每页请求的数据量
   enterSize: { type: Number, default: 20 }, // 每次加载的条目数量
   request: { type: Function, required: true }, // 请求数据的函数
-  initialState: {
-    type: Object,
-    default: () => ({
-      currentPage: 1,
-      list: [],
-      scrollTop: 0
-    })
-  }
+  channel: { type: String, default: 'recommend'}, //频道
 })
 
 //定义初始化状态
@@ -284,6 +277,47 @@ const initScrollState = () => {
 //   // 修改容器的 scrollTop 来控制滚动
 //   container.scrollTop += scrollAmount
 // })
+
+//清空所有数据，回到默认状态
+const clearAll = () => {
+  // 清空数据状态
+  dataState.loading = false;
+  dataState.isFinish = false;
+  dataState.currentPage = 1;
+  dataState.list = [];
+
+  // 重置滚动状态
+  scrollState.viewWidth = 0;
+  scrollState.viewHeight = 0;
+  scrollState.start = 0;
+
+  // 重置队列状态
+  queueState.queue = new Array(props.column).fill(0).map(() => ({ list: [], height: 0 }));
+  queueState.len = 0;
+
+  // 清空临时列表
+  temporaryList.value = [];
+
+  // 清空尺寸信息
+  itemSizeInfo.value.clear();
+
+  // 关闭显示状态
+  isShow.value = false;
+
+  // 清空容器滚动位置
+  if (containerRef.value) {
+    containerRef.value.scrollTop = 0;
+  }
+}
+
+//监听频道变化
+watch(
+  () => props.channel,
+  () => {
+    clearAll()
+    init()
+  }
+)
 
 // 初始化组件
 const init = async () => {
