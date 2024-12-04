@@ -1,14 +1,21 @@
 <script setup>
 import { defineProps } from 'vue'
+import { useRouter } from 'vue-router';
 const props = defineProps({
   detail: {
     type: Object,
     required: true
   }
 })
+
+const router = useRouter()
+
+const articleDetail = () => {
+  router.push(`/explore/${props.detail.id}`)
+}
 </script>
 <template>
-  <div class="article">
+  <div class="article" @click="articleDetail">
     <div class="cover">
       <img :src="detail.cover" :style="{ height: `${detail.imageHeight}px` }" alt="" />
     </div>

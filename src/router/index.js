@@ -15,6 +15,10 @@ const router = createRouter({
           component: () => import('@/views/layout/ExplorePage.vue')
         },
         {
+          path: '/explore/:id', 
+          component: () => import('@/components/ItemDetail.vue')
+        },
+        {
           path: 'notification',
           component: () => import('@/views/layout/NotificationPage.vue')
         },

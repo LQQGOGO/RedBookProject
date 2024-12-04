@@ -83,6 +83,7 @@ watch(
 
 <template>
   <div class="app">
+    <router-view></router-view>
     <div class="channel">
       <button
         v-for="(channel, index) in channels"
@@ -113,7 +114,8 @@ watch(
                 author: item.author,
                 likes: item.likes,
                 cover: item.url,
-                avatar: item.avatar
+                avatar: item.avatar,
+                id: item.id
               }"
             >
             </ArticleItem>
@@ -121,6 +123,7 @@ watch(
         </RedBookWaterfall>
       </KeepAlive>
     </div>
+
   </div>
 </template>
 
