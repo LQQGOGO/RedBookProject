@@ -19,6 +19,7 @@
         </div>
         <div class="detail-container"></div>
         <div class="detail-footer">
+          <img src="../assets/avatar.jpg" alt="" class="comment-avatar">
           <input class="comment-box" placeholder="说点什么..." />
           <div class="love-count">
             <svg
@@ -138,12 +139,13 @@
   width: 60vw;
   height: 80vh;
   border-radius: 20px;
+  border: 1px solid gainsboro;
   overflow: hidden;
 }
 .slide-show {
   width: 60%;
   height: 100%;
-  background-color: pink;
+  border-right: 1px solid gainsboro;
 }
 .detail {
   width: 40%;
@@ -178,15 +180,30 @@
 .detail-container {
   width: 100%;
   height: 80%;
-  background-color: skyblue;
+  border-top: 1px solid gainsboro;
+  border-bottom: 1px solid gainsboro;
 }
 .detail-footer {
+  position: relative;
   display: flex;
   width: 100%;
   height: 10%;
   justify-content: space-evenly;
   font-size: 15px;
   align-items: center;
+}
+.comment-avatar {
+  position: absolute;
+  left: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+.comment-box {
+  background-color: #f7f7f7;
+  height: 40px;
+  text-indent: 50px;
+  border-radius: calc(20px);
 }
 .icon {
   height: 25px;
