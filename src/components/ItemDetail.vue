@@ -1,16 +1,35 @@
 <script setup>
-// import { useRoute } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import SlideShow from './SlideShow.vue'
 
 // const route = useRoute()
 // const articleId = route.params.id
+const imgUrl = [
+  'http://gips3.baidu.com/it/u=1821127123,1149655687&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280',
+  'http://gips0.baidu.com/it/u=3602773692,1512483864&fm=3028&app=3028&f=JPEG&fmt=auto?w=960&h=1280',
+  'http://gips1.baidu.com/it/u=3874647369,3220417986&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280'
+]
+const slideShow = ref(null)
+const height = ref()
+const width = ref()
 
+onMounted(() => {
+  height.value = slideShow.value.clientHeight
+  width.value = slideShow.value.clientWidth
+})
 </script>
 
 <template>
   <div class="app">
     <div class="item-container">
-      <div class="slide-show">
-
+      <div class="slide-show" ref="slideShow">
+        <SlideShow
+          :detail="{
+            height,
+            width,
+            imgUrl
+          }"
+        />
       </div>
       <div class="detail">
         <div class="detail-header">
