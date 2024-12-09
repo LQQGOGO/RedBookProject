@@ -3,12 +3,15 @@
 
 // const route = useRoute()
 // const articleId = route.params.id
+
 </script>
 
 <template>
   <div class="app">
     <div class="item-container">
-      <div class="slide-show"></div>
+      <div class="slide-show">
+
+      </div>
       <div class="detail">
         <div class="detail-header">
           <div class="user">
@@ -19,7 +22,7 @@
         </div>
         <div class="detail-container"></div>
         <div class="detail-footer">
-          <img src="../assets/avatar.jpg" alt="" class="comment-avatar">
+          <img src="../assets/avatar.jpg" alt="" class="comment-avatar" />
           <input class="comment-box" placeholder="说点什么..." />
           <div class="love-count">
             <svg
@@ -146,6 +149,26 @@
   width: 60%;
   height: 100%;
   border-right: 1px solid gainsboro;
+}
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .detail {
   width: 40%;
