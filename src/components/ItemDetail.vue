@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import SlideShow from './SlideShow.vue'
+import { debounce } from '@/utils/tools';
 
 // const route = useRoute()
 // const articleId = route.params.id
@@ -10,12 +11,32 @@ const imgUrl = [
   'http://gips1.baidu.com/it/u=3874647369,3220417986&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280'
 ]
 const slideShow = ref(null)
+
+//监听视口大小的变化，随时更新图片大小
+const resizeObserver = new ResizeObserver(() => {
+  if(slideShow.value) {
+    handleResize()
+  }
+})
+
+const handleResize = debounce(() => {
+  height.value = slideShow.value.clientHeight
+  width.value = slideShow.value.clientWidth
+})
+
 const height = ref()
 const width = ref()
 
 onMounted(() => {
   height.value = slideShow.value.clientHeight
   width.value = slideShow.value.clientWidth
+  resizeObserver.observe(slideShow.value)
+})
+
+onUnmounted(() => {
+  if(slideShow.value) {
+    resizeObserver.unobserve(slideShow.value)
+  }
 })
 </script>
 
