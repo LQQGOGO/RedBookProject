@@ -1,6 +1,7 @@
 <script setup>
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Navigation, Pagination } from 'swiper/modules'
+// import { ref } from 'vue'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
@@ -17,7 +18,9 @@ const modules = [Navigation, Pagination]
 
 <template>
   <div class="app">
-    <div class="swiper-container">
+    <div
+      class="swiper-container"
+    >
       <swiper
         :modules="modules"
         :slides-per-view="1"
@@ -45,6 +48,20 @@ img {
   transition: all 0.2s;
 }
 /* 修改分页器样式 */
+:deep(.swiper-pagination),
+:deep(.swiper-button-prev),
+:deep(.swiper-button-next) {
+  opacity: 0; /* 初始隐藏 */
+  transition: opacity 0.3s ease;
+}
+
+.swiper-container:hover :deep(.swiper-pagination),
+.swiper-container:hover :deep(.swiper-button-prev),
+.swiper-container:hover :deep(.swiper-button-next) {
+  opacity: 1; /* 鼠标经过时显示 */
+}
+
+/* 修改分页器具体样式 */
 :deep(.swiper-pagination) {
   position: absolute;
   bottom: 10px;
