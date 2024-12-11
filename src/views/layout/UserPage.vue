@@ -1,18 +1,26 @@
 <script setup>
-import Carousel from '@/components/SlideShow.vue'
-const imgUrl = ['http://gips3.baidu.com/it/u=1821127123,1149655687&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280', 'http://gips0.baidu.com/it/u=3602773692,1512483864&fm=3028&app=3028&f=JPEG&fmt=auto?w=960&h=1280', 'http://gips1.baidu.com/it/u=3874647369,3220417986&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280']
+import ArticlDetail from '@/components/ArticlDetail.vue'
+
+const width = 400
+const title = '快拿去骚扰你朋友哈哈哈'
+const contentDetail = '3.26有病表情包'
+const labels = ['#适合发给男朋友的表情包', '#奇奇怪怪表情包', '#搞笑表情包分享', '#有趣的表情包']
+const date = '12-2'
+const location = '北极'
 </script>
 
 <template>
   <div id="app">
-    <Carousel
-      :detail="{
-        height: 300,
-        width: 300,
-        imgUrl
-      }"
-    />
+    <ArticlDetail :detail="{
+      width,
+      title,
+      contentDetail,
+      labels,
+      date,
+      location
+    }" />
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>

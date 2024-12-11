@@ -1,40 +1,58 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import SlideShow from './SlideShow.vue'
-import { debounce } from '@/utils/tools';
+import ArticlDetail from './ArticlDetail.vue'
+import { debounce } from '@/utils/tools'
 
 // const route = useRoute()
 // const articleId = route.params.id
+
+//准备数据
 const imgUrl = [
   'http://gips3.baidu.com/it/u=1821127123,1149655687&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280',
   'http://gips0.baidu.com/it/u=3602773692,1512483864&fm=3028&app=3028&f=JPEG&fmt=auto?w=960&h=1280',
   'http://gips1.baidu.com/it/u=3874647369,3220417986&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280'
 ]
+const title = '快拿去骚扰你朋友哈哈哈'
+const contentDetail = '3.26有病表情包'
+const labels = [
+  '#适合发给男朋友的表情包',
+  '#奇奇怪怪表情包',
+  '#搞笑表情包分享',
+  '#有趣的表情包'
+]
+const date = '12-2'
+const location = '北极'
+const detailWidth = ref()
+
 const slideShow = ref(null)
+const slideHeight = ref()
+const slideWidth = ref()
 
 //监听视口大小的变化，随时更新图片大小
 const resizeObserver = new ResizeObserver(() => {
-  if(slideShow.value) {
+  if (slideShow.value) {
     handleResize()
   }
 })
 
+//同步图片大小和轮播图大小
 const handleResize = debounce(() => {
-  height.value = slideShow.value.clientHeight
-  width.value = slideShow.value.clientWidth
+  slideHeight.value = slideShow.value.clientHeight
+  slideWidth.value = slideShow.value.clientWidth
 })
 
-const height = ref()
-const width = ref()
-
 onMounted(() => {
-  height.value = slideShow.value.clientHeight
-  width.value = slideShow.value.clientWidth
+  //在挂载的时候记录轮播图的宽高
+  slideHeight.value = slideShow.value.clientHeight
+  slideWidth.value = slideShow.value.clientWidth
+
+  //对轮播图大小变化添加监听器
   resizeObserver.observe(slideShow.value)
 })
 
 onUnmounted(() => {
-  if(slideShow.value) {
+  if (slideShow.value) {
     resizeObserver.unobserve(slideShow.value)
   }
 })
@@ -46,8 +64,8 @@ onUnmounted(() => {
       <div class="slide-show" ref="slideShow">
         <SlideShow
           :detail="{
-            height,
-            width,
+            height: slideHeight,
+            width: slideWidth,
             imgUrl
           }"
         />
@@ -60,7 +78,19 @@ onUnmounted(() => {
           </div>
           <button class="subscribe">关注</button>
         </div>
-        <div class="detail-container"></div>
+        <div class="detail-container">
+          <ArticlDetail
+            :detail="{
+              width: detailWidth,
+              title,
+              contentDetail,
+              labels,
+              date,
+              location
+            }"
+          />
+          <div class="comment-container"></div>
+        </div>
         <div class="detail-footer">
           <img src="../assets/avatar.jpg" alt="" class="comment-avatar" />
           <input class="comment-box" placeholder="说点什么..." />
@@ -245,6 +275,10 @@ onUnmounted(() => {
   height: 80%;
   border-top: 1px solid gainsboro;
   border-bottom: 1px solid gainsboro;
+}
+.comment-container {
+  width: 100%;
+  border-top: 1px solid gainsboro;
 }
 .detail-footer {
   position: relative;
