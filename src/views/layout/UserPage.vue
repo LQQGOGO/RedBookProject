@@ -4,7 +4,7 @@ import CommentContainer from '@/components/CommentContainer.vue'
 
 <template>
   <div id="app">
-    <CommentContainer :width="500" />
+    <CommentContainer :height="500" />
   </div>
 </template>
 

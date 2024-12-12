@@ -30,7 +30,10 @@ const slideShow = ref(null)
 const slideHeight = ref()
 const slideWidth = ref()
 
-const commentWidth = ref()
+const commentHeight = ref()
+const commentContainer = ref(null)
+const articlDetail = ref(null)
+const detailContainer = ref(null)
 
 //监听视口大小的变化，随时更新图片大小
 const resizeObserver = new ResizeObserver(() => {
@@ -43,12 +46,16 @@ const resizeObserver = new ResizeObserver(() => {
 const handleResize = debounce(() => {
   slideHeight.value = slideShow.value.clientHeight
   slideWidth.value = slideShow.value.clientWidth
+  commentHeight.value =
+    detailContainer.value.clientHeight - articlDetail.value.clientHeight
 })
 
 onMounted(() => {
   //在挂载的时候记录轮播图的宽高
   slideHeight.value = slideShow.value.clientHeight
   slideWidth.value = slideShow.value.clientWidth
+  commentHeight.value =
+    detailContainer.value.clientHeight - articlDetail.value.clientHeight
 
   //对轮播图大小变化添加监听器
   resizeObserver.observe(slideShow.value)
@@ -81,19 +88,21 @@ onUnmounted(() => {
           </div>
           <button class="subscribe">关注</button>
         </div>
-        <div class="detail-container">
-          <ArticlDetail
-            :detail="{
-              width: detailWidth,
-              title,
-              contentDetail,
-              labels,
-              date,
-              location
-            }"
-          />
-          <div class="comment-container">
-            <CommentContainer :width="commentWidth" />
+        <div class="detail-container" ref="detailContainer">
+          <div class="articl-detail" ref="articlDetail">
+            <ArticlDetail
+              :detail="{
+                width: detailWidth,
+                title,
+                contentDetail,
+                labels,
+                date,
+                location
+              }"
+            />
+          </div>
+          <div class="comment-container" ref="commentContainer">
+            <CommentContainer :height="commentHeight" />
           </div>
         </div>
         <div class="detail-footer">
