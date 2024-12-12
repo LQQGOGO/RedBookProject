@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import SlideShow from './SlideShow.vue'
 import ArticlDetail from './ArticlDetail.vue'
+import CommentContainer from '@/components/CommentContainer.vue'
 import { debounce } from '@/utils/tools'
 
 // const route = useRoute()
@@ -28,6 +29,8 @@ const detailWidth = ref()
 const slideShow = ref(null)
 const slideHeight = ref()
 const slideWidth = ref()
+
+const commentWidth = ref()
 
 //监听视口大小的变化，随时更新图片大小
 const resizeObserver = new ResizeObserver(() => {
@@ -89,7 +92,9 @@ onUnmounted(() => {
               location
             }"
           />
-          <div class="comment-container"></div>
+          <div class="comment-container">
+            <CommentContainer :width="commentWidth" />
+          </div>
         </div>
         <div class="detail-footer">
           <img src="../assets/avatar.jpg" alt="" class="comment-avatar" />
