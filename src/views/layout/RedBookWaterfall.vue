@@ -321,6 +321,9 @@ watch(
 
 // 初始化组件
 const init = async () => {
+  //记录频道信息
+  itemStore.saveChannel(props.channel)
+  
   await nextTick() // 等待 DOM 完全挂载
   if (!containerRef.value) {
     console.error('获取容器失败')
@@ -355,6 +358,7 @@ onMounted(async () => {
   if (itemStore.notes.length == 0) {
     init()
   }
+
   // 监听全局的 wheel 事件
   // window.addEventListener('wheel', handleGlobalWheel)
 })

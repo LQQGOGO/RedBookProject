@@ -40,7 +40,7 @@ const navs = [
 
 const route = useRoute()
 const router = useRouter()
-const currentChannel = ref(route.query.channel || 'recommend')
+const currentChannel = ref(route.query.channel || itemStore.channel || 'recommend')
 
 //调用接口获得新数据
 const getData = async (page, pageSize) => {

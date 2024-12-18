@@ -29,12 +29,18 @@ export const useItemStore = defineStore(
       isFinish.value = t
     }
 
+    const channel = ref('recommend')
+    const saveChannel = t => {
+      channel.value = t
+    }
+
     // 清除仓库数据
     const clearData = () => {
       scrollTop.value = 0
       currentPage.value = 0
       notes.value = []
       isFinish.value = false
+      channel.value = 'recommend'
     }
 
     return {
@@ -46,6 +52,8 @@ export const useItemStore = defineStore(
       appendNotes,
       isFinish,
       saveIsfinish,
+      channel,
+      saveChannel,
       clearData
     }
   },
