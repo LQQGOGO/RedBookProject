@@ -112,7 +112,7 @@ const getData = async () => {
   color: black;
 }
 .title {
-  margin: 50px auto;
+  margin: 30px auto;
   text-align: center;
   height: 40px;
   width: 80px;
