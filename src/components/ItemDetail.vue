@@ -41,6 +41,8 @@ const detailContainer = ref(null)
 
 const isLoved = ref(0)
 const loveCount = ref()
+const isCollected = ref(0)
+const collectCount = ref(234)
 
 //通过笔记id获得笔记详情
 const getDetail = async id => {
@@ -54,13 +56,22 @@ const changeLoveStatus = async id => {
   if (isLoved.value == 0) {
     isLoved.value = 1
     loveCount.value += 1
-    const response = await changeLove(id)
-    console.log(response)
+    await changeLove(id)
   } else {
     isLoved.value = 0
     loveCount.value = Math.max(0, loveCount.value - 1)
-    const response = await changeLove(id)
-    console.log(response)
+    await changeLove(id)
+  }
+}
+
+//改变收藏状态
+const changeCollectStatus = async () => {
+  if (isCollected.value == 0) {
+    isCollected.value = 1
+    collectCount.value += 1
+  } else {
+    isCollected.value = 0
+    collectCount.value = Math.max(0, collectCount.value - 1)
   }
 }
 
@@ -175,10 +186,9 @@ onUnmounted(() => {
                 p-id="4552"
               ></path>
             </svg>
-
             <span class="numbers">{{ loveCount }}</span>
           </div>
-          <div class="collect-count">
+          <div class="collect-count" @click="changeCollectStatus()">
             <svg
               v-if="isCollected"
               t="1733319987018"
@@ -212,7 +222,7 @@ onUnmounted(() => {
                 p-id="9607"
               ></path>
             </svg>
-            <span class="numbers">2233</span>
+            <span class="numbers">{{collectCount}}</span>
           </div>
           <div class="comment-count">
             <svg
