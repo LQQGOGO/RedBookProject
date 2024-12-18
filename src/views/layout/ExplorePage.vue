@@ -57,6 +57,7 @@ const getData = async (page, pageSize) => {
     title: i.title,
     author: i.nickname,
     likes: i.liked_count,
+    isLiked: i.liked,
     avatar: i.avatar
   }))
 
@@ -113,6 +114,7 @@ watch(
                 title: item.title,
                 author: item.author,
                 likes: item.likes,
+                isLiked: item.isLiked,
                 cover: item.url,
                 avatar: item.avatar,
                 id: item.id
