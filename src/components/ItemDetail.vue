@@ -1,12 +1,15 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
 import SlideShow from './SlideShow.vue'
 import ArticlDetail from './ArticlDetail.vue'
 import CommentContainer from '@/components/CommentContainer.vue'
 import { debounce } from '@/utils/tools'
+import { getItemDetail } from '@/api/itemDetail'
 
-// const route = useRoute()
-// const articleId = route.params.id
+//通过路径获得笔记id
+const route = useRoute()
+const articleId = route.params.id
 
 //准备数据
 const imgUrl = [
@@ -35,6 +38,16 @@ const commentContainer = ref(null)
 const articlDetail = ref(null)
 const detailContainer = ref(null)
 
+const isLoved = ref(0)
+const loveCount = ref()
+
+//通过笔记id获得笔记详情
+const getDetail = async ( id ) => {
+  const response = await getItemDetail(id)
+  isLoved.value = response[0].liked
+  loveCount.value = response[0].liked_count
+}
+
 //监听视口大小的变化，随时更新图片大小
 const resizeObserver = new ResizeObserver(() => {
   if (slideShow.value) {
@@ -51,6 +64,9 @@ const handleResize = debounce(() => {
 })
 
 onMounted(() => {
+  //调用笔记详情接口，获得笔记详情
+  getDetail(articleId)
+  
   //在挂载的时候记录轮播图的宽高
   slideHeight.value = slideShow.value.clientHeight
   slideWidth.value = slideShow.value.clientWidth
@@ -144,7 +160,7 @@ onUnmounted(() => {
               ></path>
             </svg>
 
-            <span class="numbers">2233</span>
+            <span class="numbers">{{loveCount}}</span>
           </div>
           <div class="collect-count">
             <svg

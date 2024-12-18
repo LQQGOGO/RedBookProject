@@ -83,7 +83,7 @@ watch(
 
 <template>
   <div class="app">
-    <router-view></router-view>
+    <!-- <router-view></router-view> -->
     <div class="channel">
       <button
         v-for="(channel, index) in channels"
