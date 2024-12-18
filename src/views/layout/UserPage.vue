@@ -1,4 +1,32 @@
-<script setup></script>
+<script setup>
+import { ref } from 'vue'
+import LoveWaterfall from './LoveWaterfall.vue'
+import ArticleItem from '@/components/ArticleItem.vue'
+import { getLoveList } from '@/api/loveList'
+
+const column = ref(5)
+
+//调用接口获得新数据
+const getData = async () => {
+  const response = await getLoveList()
+
+  if (!response || !response.data) {
+    throw new Error('接口返回的数据格式错误')
+  }
+  const newData = response.data.map(i => ({
+    id: i.note_id,
+    url: i.cover,
+    width: i.width,
+    height: i.height,
+    title: i.title,
+    author: i.nickname,
+    likes: i.liked_count,
+    isLiked: i.liked,
+    avatar: i.avatar
+  }))
+  return newData
+}
+</script>
 
 <template>
   <div class="userinfo-container">
@@ -15,7 +43,33 @@
   </div>
 
   <div class="title">点赞内容</div>
-  <div class="love-container"></div>
+  <div class="love-container">
+    <LoveWaterfall
+      :column="column"
+      :gap="20"
+      :page-size="20"
+      :request="getData"
+      :enter-size="column * 2"
+      ref="flistRef"
+    >
+      <template #item="{ item, imageHeight, width }">
+        <ArticleItem
+          :detail="{
+            imageHeight,
+            width,
+            title: item.title,
+            author: item.author,
+            likes: item.likes,
+            isLiked: item.isLiked,
+            cover: item.url,
+            avatar: item.avatar,
+            id: item.id
+          }"
+        >
+        </ArticleItem>
+      </template>
+    </LoveWaterfall>
+  </div>
 </template>
 
 <style scoped>
@@ -72,5 +126,6 @@
 }
 .love-container {
   border-top: 2px solid #f7f7f7;
+  padding-top: 20px;
 }
 </style>
