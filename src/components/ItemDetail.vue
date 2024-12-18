@@ -6,6 +6,7 @@ import ArticlDetail from './ArticlDetail.vue'
 import CommentContainer from '@/components/CommentContainer.vue'
 import { debounce } from '@/utils/tools'
 import { getItemDetail } from '@/api/itemDetail'
+import { changeLove } from '@/api/addLike'
 
 //通过路径获得笔记id
 const route = useRoute()
@@ -42,10 +43,25 @@ const isLoved = ref(0)
 const loveCount = ref()
 
 //通过笔记id获得笔记详情
-const getDetail = async ( id ) => {
+const getDetail = async id => {
   const response = await getItemDetail(id)
   isLoved.value = response[0].liked
   loveCount.value = response[0].liked_count
+}
+
+//改变点赞状态
+const changeLoveStatus = async id => {
+  if (isLoved.value == 0) {
+    isLoved.value = 1
+    loveCount.value += 1
+    const response = await changeLove(id)
+    console.log(response)
+  } else {
+    isLoved.value = 0
+    loveCount.value = Math.max(0, loveCount.value - 1)
+    const response = await changeLove(id)
+    console.log(response)
+  }
 }
 
 //监听视口大小的变化，随时更新图片大小
@@ -66,7 +82,7 @@ const handleResize = debounce(() => {
 onMounted(() => {
   //调用笔记详情接口，获得笔记详情
   getDetail(articleId)
-  
+
   //在挂载的时候记录轮播图的宽高
   slideHeight.value = slideShow.value.clientHeight
   slideWidth.value = slideShow.value.clientWidth
@@ -124,7 +140,7 @@ onUnmounted(() => {
         <div class="detail-footer">
           <img src="../assets/avatar.jpg" alt="" class="comment-avatar" />
           <input class="comment-box" placeholder="说点什么..." />
-          <div class="love-count">
+          <div class="love-count" @click="changeLoveStatus(articleId)">
             <svg
               v-if="isLoved"
               t="1733319880680"
@@ -160,7 +176,7 @@ onUnmounted(() => {
               ></path>
             </svg>
 
-            <span class="numbers">{{loveCount}}</span>
+            <span class="numbers">{{ loveCount }}</span>
           </div>
           <div class="collect-count">
             <svg
