@@ -3,7 +3,7 @@ import request from '@/utils/request'
 export const codeRegist = async (username, password) => {
   try {
     const response = await request.post(
-      '/api/regist',
+      '/user/register',
       {
         username: username,
         password: password
@@ -14,8 +14,7 @@ export const codeRegist = async (username, password) => {
         }
       }
     )
-    console.log(response.data)
-    return response // 确保返回响应
+    return response.data // 确保返回响应
   } catch (error) {
     console.error('请求失败:', error)
 

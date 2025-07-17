@@ -60,18 +60,23 @@ const register = async () => {
       formModel.value.username,
       formModel.value.password
     )
+    console.log('response',response);
+
     // 检查响应状态是否为 200
-    if (response.status === 200) {
+    if (response.code === 200) {
       ElMessage.success(response.message || '注册成功')
       setInterval(() => {
         isRegister.value = false
       }, 1000)
     } else {
-      // 若 status 不为 200，则显示错误消息
-      ElMessage.error(response.message || '注册失败')
+      // 若 code 不为 200，则显示错误消息
+      // console.log(response);
+      ElMessage.error(response.error || '注册失败')
     }
   } catch (error) {
     // 捕获任何未捕获的错误，并显示错误信息
+    console.log('error',error);
+
     ElMessage.error(`请求失败：${error.message || '请稍后重试'}`)
     console.error('注册过程中的错误:', error)
     console.error('错误的详细信息:', JSON.stringify(error))
@@ -98,8 +103,9 @@ const login = async () => {
       formModel.value.username,
       formModel.value.password
     )
+    console.log(response);
     // 检查响应状态是否为 200
-    if (response.status === 200) {
+    if (response.code === 200) {
       const token = response.data.token
       // 将 token 和 userId 存储在 localStorage 中
       //console.log(token);
@@ -109,7 +115,7 @@ const login = async () => {
       ElMessage.success(response.message || '登录成功')
       router.push('/')
     } else {
-      // 若 status 不为 200，则显示错误消息
+      // 若 code 不为 200，则显示错误消息
       ElMessage.error(response.message || '登录失败')
     }
   } catch (error) {
