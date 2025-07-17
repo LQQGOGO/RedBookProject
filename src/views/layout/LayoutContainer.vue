@@ -43,11 +43,7 @@ onBeforeUnmount(() => {
         </svg>
         发现
       </router-link>
-      <a
-        class="sidelinks"
-        href="https://creator.xiaohongshu.com/publish/publish?source=official"
-        target="_blank"
-        rel="noopener noreferrer"
+      <router-link class="sidelinks" to="/publish" active-class="active"
       >
         <svg
           t="1731324557365"
@@ -66,7 +62,7 @@ onBeforeUnmount(() => {
           ></path>
         </svg>
         发布
-      </a>
+      </router-link>
       <router-link class="sidelinks" to="/notification" active-class="active">
         <svg
           t="1731324594476"
@@ -87,7 +83,7 @@ onBeforeUnmount(() => {
         通知
       </router-link>
       <router-link class="sidelinks" to="/user" active-class="active">
-        <img class="avatar" src="@/assets/avatar.jpg" alt="" />
+        <img class="avatar" src="@/assets/avatar.png" alt="" />
         我
       </router-link>
     </div>
