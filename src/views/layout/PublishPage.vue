@@ -14,6 +14,7 @@ import {
 } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import { uploadImage } from '@/api/uploadImage'
+import { uploadVideo } from '@/api/uploadVideo'
 import { publish } from '@/api/publish'
 import { useUserStore } from '@/stores/user'
 import { getImageSize } from '@/utils/getImageSize'
@@ -72,8 +73,6 @@ const handleImageUpload = async file => {
     console.error('图片上传失败:', error)
   }
 }
-// 视频上传相关
-const videoFileList = ref([])
 
 // 处理图片预览
 const handlePreview = file => {
@@ -110,52 +109,52 @@ const openEmojiSelect = () => {
 const handlePublish = async () => {
   try {
     // 表单非空校验
-  if (!title.value.trim()) {
-    ElMessage.error('标题不能为空')
-    return
-  }
-  if (!content.value.trim()) {
-    ElMessage.error('正文不能为空')
-    return
-  }
-  if (imageFileList.value.length === 0) {
-    ElMessage.error('请至少上传一张图片')
-    return
-  }
-  if (!selectedCategory.value) {
-    ElMessage.error('请选择分类')
-    return
-  }
-  const mediaType = activeTab.value === 'imageText' ? 0 : 1
-  const mediaUrls = JSON.stringify(imageFileList.value)
-  let cover = defaultCover
-  if (mediaType === 0) {
-    cover = imageFileList.value[0]
-  } else {
-    // 视频封面
-  }
-  // console.log('cover', cover)
-  const coverSize = await getImageSize(cover.url)
-  const userStore = useUserStore()
-  const data = {
-    userId: userStore.userId,
-    title: title.value,
-    content: content.value,
-    mediaType: mediaType,
-    mediaUrls: mediaUrls,
-    cover: cover.url,
-    coverWidth: coverSize.width,
-    coverHeight: coverSize.height,
-    category: selectedCategory.value
-  }
-  const res = await publish(data)
-  // console.log('res', res)
-  if (res.code === 200) {
-    ElMessage.success('发布成功')
-    router.push('/')
-  } else {
-    ElMessage.error('发布失败')
-  }
+    if (!title.value.trim()) {
+      ElMessage.error('标题不能为空')
+      return
+    }
+    if (!content.value.trim()) {
+      ElMessage.error('正文不能为空')
+      return
+    }
+    if (imageFileList.value.length === 0) {
+      ElMessage.error('请至少上传一张图片')
+      return
+    }
+    if (!selectedCategory.value) {
+      ElMessage.error('请选择分类')
+      return
+    }
+    const mediaType = activeTab.value === 'imageText' ? 0 : 1
+    const mediaUrls = JSON.stringify(imageFileList.value)
+    let cover = defaultCover
+    if (mediaType === 0) {
+      cover = imageFileList.value[0]
+    } else {
+      // 视频封面
+    }
+    // console.log('cover', cover)
+    const coverSize = await getImageSize(cover.url)
+    const userStore = useUserStore()
+    const data = {
+      userId: userStore.userId,
+      title: title.value,
+      content: content.value,
+      mediaType: mediaType,
+      mediaUrls: mediaUrls,
+      cover: cover.url,
+      coverWidth: coverSize.width,
+      coverHeight: coverSize.height,
+      category: selectedCategory.value
+    }
+    const res = await publish(data)
+    // console.log('res', res)
+    if (res.code === 200) {
+      ElMessage.success('发布成功')
+      router.push('/')
+    } else {
+      ElMessage.error('发布失败')
+    }
   } catch (error) {
     console.error('发布失败:', error)
     ElMessage.error('发布失败，请稍后重试')
@@ -174,6 +173,39 @@ const handleSaveDraft = () => {
     group: selectedGroup.value,
     category: selectedCategory.value
   })
+}
+
+//视频上传相关
+const videoFileList = ref([])
+const coverFileList = ref([])
+const videoUrl = ref('')
+const coverUrl = ref('')
+
+// // 封面预览
+// const handleCoverPreview = file => {
+//   previewImageUrl.value = file.url
+//   previewDialogVisible.value = true
+// }
+
+// // 封面移除
+// const handleCoverRemove = (file, fileList) => {
+//   coverFileList.value = fileList
+//   coverUrl.value = fileList.length > 0 ? fileList[0].url : '' // 更新封面URL
+// }
+
+//上传视频
+const handleVideoUpload = async file => {
+  try {
+    const formData = new FormData()
+    formData.append('video', file.file)
+    const response = await uploadVideo(formData)
+    console.log('response', response)
+    videoFileList.value.push({
+      url: response.url
+    })
+  } catch (error) {
+    console.error('视频上传失败:', error)
+  }
 }
 
 // 处理视频预览（简单模拟，实际可结合视频预览组件）
@@ -228,8 +260,59 @@ const handleVideoSaveDraft = () => {
       <el-dialog v-model="previewDialogVisible" title="图片预览">
         <img :src="previewImageUrl" alt="预览" class="preview-image" />
       </el-dialog>
+    </div>
 
-      <!-- 正文内容 -->
+    <!-- 视频发布部分 -->
+    <div v-else class="video-publish">
+      <el-upload
+        class="video-upload"
+        :http-request="handleVideoUpload"
+        :on-preview="handleVideoPreview"
+        :on-remove="handleVideoRemove"
+        :file-list="videoFileList"
+        accept="video/*"
+        :limit="1"
+        list-type="text"
+      >
+        <el-button type="primary">上传视频</el-button>
+      </el-upload>
+
+      <!-- 封面上传区域 -->
+      <div class="cover-upload-container">
+        <h3 class="upload-title">视频封面</h3>
+        <el-upload
+          class="cover-upload"
+          :http-request="handleImageUpload"
+          :multiple="false"
+          :on-preview="handlePreview"
+          :on-remove="handleRemove"
+          :file-list="coverFileList"
+          :limit="1"
+          accept="image/*"
+          list-type="picture-card"
+        >
+          <i class="el-icon-plus"></i>
+        </el-upload>
+        <div class="cover-info">
+          <p>封面建议：尺寸比例16:9，推荐分辨率1280×720px</p>
+          <p>图片格式：支持JPG、PNG格式，文件大小不超过5MB</p>
+        </div>
+      </div>
+
+      <div class="video-info">
+        <p>视频大小：支持时长60分钟以内，最大20GB的视频文件</p>
+        <p>视频格式：支持常用视频格式，推荐使用mp4、mov</p>
+        <p>
+          视频分辨率：推荐上传720P（1280*720）及以上视频，超过1080P的视频用网页端上传画质更清晰
+        </p>
+      </div>
+      <!-- <div class="button-group">
+        <el-button type="primary" @click="handleVideoPublish">发布</el-button>
+        <el-button @click="handleVideoSaveDraft">暂存离开</el-button>
+      </div> -->
+    </div>
+    <!-- 正文内容 -->
+    <div>
       <el-input
         class="title-input"
         placeholder="填写标题会有更多赞哦~"
@@ -329,54 +412,6 @@ const handleVideoSaveDraft = () => {
         <el-button @click="handleSaveDraft">暂存离开</el-button>
       </div>
     </div>
-
-    <!-- 视频发布部分 -->
-    <div v-else class="video-publish">
-      <el-upload
-        class="video-upload"
-        action="#"
-        :on-preview="handleVideoPreview"
-        :on-remove="handleVideoRemove"
-        :file-list="videoFileList"
-        accept="video/*"
-      >
-        <el-button type="primary">上传视频</el-button>
-      </el-upload>
-
-      <!-- 封面上传区域 -->
-      <div class="cover-upload-container">
-        <h3 class="upload-title">视频封面</h3>
-        <el-upload
-          class="cover-upload"
-          action="#"
-          :on-preview="handleCoverPreview"
-          :on-remove="handleCoverRemove"
-          :on-change="handleCoverChange"
-          :file-list="coverFileList"
-          :limit="1"
-          accept="image/*"
-          list-type="picture-card"
-        >
-          <i class="el-icon-plus"></i>
-        </el-upload>
-        <div class="cover-info">
-          <p>封面建议：尺寸比例16:9，推荐分辨率1280×720px</p>
-          <p>图片格式：支持JPG、PNG格式，文件大小不超过5MB</p>
-        </div>
-      </div>
-
-      <div class="video-info">
-        <p>视频大小：支持时长60分钟以内，最大20GB的视频文件</p>
-        <p>视频格式：支持常用视频格式，推荐使用mp4、mov</p>
-        <p>
-          视频分辨率：推荐上传720P（1280*720）及以上视频，超过1080P的视频用网页端上传画质更清晰
-        </p>
-      </div>
-      <div class="button-group">
-        <el-button type="primary" @click="handleVideoPublish">发布</el-button>
-        <el-button @click="handleVideoSaveDraft">暂存离开</el-button>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -392,6 +427,7 @@ const handleVideoSaveDraft = () => {
 .image-text-publish {
   display: flex;
   flex-direction: column;
+  margin-bottom: 20px;
   gap: 16px;
 }
 
@@ -412,6 +448,7 @@ const handleVideoSaveDraft = () => {
 
 .title-input {
   width: 100%;
+  margin-bottom: 15px;
 }
 
 .content-input {
@@ -422,21 +459,25 @@ const handleVideoSaveDraft = () => {
 .tags-section {
   display: flex;
   align-items: center;
+  margin-bottom: 15px;
   gap: 10px;
 }
 
 .activity-tags {
   display: flex;
   gap: 10px;
+  margin-bottom: 15px;
   flex-wrap: wrap;
 }
 
 .other-select {
   margin-right: 10px;
+  margin-bottom: 15px;
 }
 
 .video-publish {
   display: flex;
+  margin-bottom: 20px;
   flex-direction: column;
   gap: 16px;
 }
