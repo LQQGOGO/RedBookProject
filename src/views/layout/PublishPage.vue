@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import {
   ElTabs,
   ElTabPane,
@@ -105,62 +105,6 @@ const openEmojiSelect = () => {
   selectedTags.value.push('😄')
 }
 
-// 发布图文
-const handlePublish = async () => {
-  try {
-    // 表单非空校验
-    if (!title.value.trim()) {
-      ElMessage.error('标题不能为空')
-      return
-    }
-    if (!content.value.trim()) {
-      ElMessage.error('正文不能为空')
-      return
-    }
-    if (imageFileList.value.length === 0) {
-      ElMessage.error('请至少上传一张图片')
-      return
-    }
-    if (!selectedCategory.value) {
-      ElMessage.error('请选择分类')
-      return
-    }
-    const mediaType = activeTab.value === 'imageText' ? 0 : 1
-    const mediaUrls = JSON.stringify(imageFileList.value)
-    let cover = defaultCover
-    if (mediaType === 0) {
-      cover = imageFileList.value[0]
-    } else {
-      // 视频封面
-    }
-    // console.log('cover', cover)
-    const coverSize = await getImageSize(cover.url)
-    const userStore = useUserStore()
-    const data = {
-      userId: userStore.userId,
-      title: title.value,
-      content: content.value,
-      mediaType: mediaType,
-      mediaUrls: mediaUrls,
-      cover: cover.url,
-      coverWidth: coverSize.width,
-      coverHeight: coverSize.height,
-      category: selectedCategory.value
-    }
-    const res = await publish(data)
-    // console.log('res', res)
-    if (res.code === 200) {
-      ElMessage.success('发布成功')
-      router.push('/')
-    } else {
-      ElMessage.error('发布失败')
-    }
-  } catch (error) {
-    console.error('发布失败:', error)
-    ElMessage.error('发布失败，请稍后重试')
-  }
-}
-
 // 暂存图文草稿
 const handleSaveDraft = () => {
   console.log('暂存图文草稿：', {
@@ -178,8 +122,8 @@ const handleSaveDraft = () => {
 //视频上传相关
 const videoFileList = ref([])
 const coverFileList = ref([])
-const videoUrl = ref('')
-const coverUrl = ref('')
+// const videoUrl = ref('')
+// const coverUrl = ref('')
 
 // // 封面预览
 // const handleCoverPreview = file => {
@@ -208,7 +152,7 @@ const handleVideoUpload = async file => {
   }
 }
 
-// 处理视频预览（简单模拟，实际可结合视频预览组件）
+// 处理视频预览
 const handleVideoPreview = file => {
   console.log('预览视频：', file)
 }
@@ -219,18 +163,76 @@ const handleVideoRemove = (file, fileList) => {
 }
 
 // 发布视频
-const handleVideoPublish = () => {
-  console.log('发布视频内容：', {
-    video: videoFileList.value
-  })
-  // 实际项目中调用后端视频上传接口
-}
+// const handleVideoPublish = () => {
+//   console.log('发布视频内容：', {
+//     video: videoFileList.value
+//   })
+//   // 实际项目中调用后端视频上传接口
+// }
 
 // 暂存视频草稿
-const handleVideoSaveDraft = () => {
-  console.log('暂存视频草稿：', {
-    video: videoFileList.value
-  })
+// const handleVideoSaveDraft = () => {
+//   console.log('暂存视频草稿：', {
+//     video: videoFileList.value
+//   })
+// }
+
+// 发布
+const handlePublish = async () => {
+  try {
+    const mediaType = activeTab.value === 'imageText' ? 0 : 1
+    // 表单非空校验
+    if (!title.value.trim()) {
+      ElMessage.error('标题不能为空')
+      return
+    }
+    if (!content.value.trim()) {
+      ElMessage.error('正文不能为空')
+      return
+    }
+    if (mediaType === 0 && imageFileList.value.length === 0) {
+      ElMessage.error('请至少上传一张图片')
+      return
+    } else if (mediaType === 1 && videoFileList.value.length === 0) {
+      ElMessage.error('请上传视频')
+      return
+    }
+
+    if (!selectedCategory.value) {
+      ElMessage.error('请选择分类')
+      return
+    }
+
+    const mediaUrls = JSON.stringify(
+      mediaType === 0 ? imageFileList.value : videoFileList.value
+    )
+    let cover = imageFileList.value[0] ? imageFileList.value[0] : defaultCover
+    // console.log('cover', cover)
+    const coverSize = await getImageSize(cover.url)
+    const userStore = useUserStore()
+    const data = {
+      userId: userStore.userId,
+      title: title.value,
+      content: content.value,
+      mediaType: mediaType,
+      mediaUrls: mediaUrls,
+      cover: cover.url,
+      coverWidth: coverSize.width,
+      coverHeight: coverSize.height,
+      category: selectedCategory.value
+    }
+    const res = await publish(data)
+    // console.log('res', res)
+    if (res.code === 200) {
+      ElMessage.success('发布成功')
+      router.push('/')
+    } else {
+      ElMessage.error('发布失败')
+    }
+  } catch (error) {
+    console.error('发布失败:', error)
+    ElMessage.error('发布失败，请稍后重试')
+  }
 }
 </script>
 
