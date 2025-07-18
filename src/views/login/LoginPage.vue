@@ -103,7 +103,7 @@ const login = async () => {
       formModel.value.username,
       formModel.value.password
     )
-    console.log(response)
+    // console.log(response)
     // 检查响应状态是否为 200
     if (response.code === 200) {
       // console.log('response.data', response.data)
