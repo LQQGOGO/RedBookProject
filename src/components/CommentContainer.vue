@@ -1,6 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { getCommentList } from '@/api/comment'
+import { useCommentListStore } from '@/stores/commentList'
+
+const commentListStore = useCommentListStore()
 
 const props = defineProps({
   height: {
@@ -11,13 +14,16 @@ const props = defineProps({
   }
 })
 
-const commentList = ref([])
+// const commentList = ref([])
 
 onMounted(async () => {
-  const response = await getCommentList(props.id)
-  // console.log('response', response)
-  commentList.value = response.data.data
-  console.log('commentList', commentList.value)
+  const articleId = parseInt(props.id)
+  // const response = await getCommentList(articleId)
+  // console.log('response', response.data.data)
+  // commentListStore.setCommentList(response.data.data)
+  await commentListStore.setNewCommentList(articleId)
+
+  // console.log('commentList', commentList.value)
 })
 
 </script>
@@ -25,15 +31,15 @@ onMounted(async () => {
 <template>
   <div id="app">
     <div class="comment-container">
-      <div class="comment-number">共 {{ commentList.length }} 条评论</div>
-      <div class="comment-detail" v-for="item in commentList" :key="item.id">
-        <img src="../assets/avatar.jpg" class="avatar" />
+      <div class="comment-number">共 {{ commentListStore.commentList.length }} 条评论</div>
+      <div class="comment-detail" v-for="item in commentListStore.commentList" :key="item.id">
+        <img :src="item.user.avatar" class="avatar" />
         <div class="user-info">
-          <div class="nickname">白陶Y</div>
+          <div class="nickname">{{ item.user.nickname }}</div>
           <div class="content">
-            欢迎宝宝们一起打卡～！主页会每日更新打卡单词和记忆小技巧哦！喜欢的宝宝可以关注一下～！我们一起进步！
+            {{ item.content }}
           </div>
-          <div class="time">今天 15:18 贵州</div>
+          <div class="time">{{ item.created_at.split('T')[0] }} 贵州</div>
           <div class="footer">
             <div class="love">
               <svg

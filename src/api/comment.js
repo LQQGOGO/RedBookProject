@@ -9,7 +9,7 @@ export const getCommentList = async (id) => {
   try {
     const response = await request.get('/comment/list', {
       params: {
-        id: id
+        articleId: id
       }
     })
     return response.data
@@ -20,6 +20,7 @@ export const getCommentList = async (id) => {
 
 export const createComment = async (id, content) => {
   try {
+    console.log(typeof id)
     const response = await request.post('/comment/create', {
       articleId: id,
       content: content,

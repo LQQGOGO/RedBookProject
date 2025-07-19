@@ -1,7 +1,9 @@
 <script setup>
 import { ref, defineProps } from 'vue'
 import { createComment } from '@/api/comment'
+import { useCommentListStore } from '@/stores/commentList'
 
+const commentListStore = useCommentListStore()
 const props = defineProps({
   articleId: {
     type: String,
@@ -17,15 +19,13 @@ const props = defineProps({
   },
   loveCount: {
     type: Number,
-    required: true
+    required: true,
+    default: 0
   },
   collectCount: {
     type: Number,
-    required: true
-  },
-  commentCount: {
-    type: Number,
-    required: true
+    required: true,
+    default: 0
   },
   changeLoveStatus: {
     type: Function,
@@ -50,9 +50,14 @@ const handleExpand = () => {
 
 const handlePublish = async () => {
   try {
-    console.log('comment', comment.value)
-    const res = await createComment(props.articleId, comment.value)
-    console.log('res', res)
+    // console.log('comment', comment.value)
+    const articleId = parseInt(props.articleId)
+    await createComment(articleId, comment.value)
+    await commentListStore.setNewCommentList(articleId)
+    comment.value = ''
+    isCollapsed.value = true
+    // window.location.reload()
+    // console.log('res', res)
   } catch (error) {
     console.error('评论失败', error)
   }
@@ -158,7 +163,7 @@ const handlePublish = async () => {
           p-id="8631"
         ></path>
       </svg>
-      <span class="numbers">2233</span>
+      <span class="numbers">{{ commentListStore.commentList.length }}</span>
     </div>
     <div class="share">
       <svg

@@ -9,6 +9,7 @@ import { getItemDetail } from '@/api/itemDetail'
 import { addLike, removeLike, addCollect, removeCollect } from '@/api/addLike'
 import { didLiked, didCollected} from '@/api/user'
 import CommentInput from '@/components/CommentInput.vue'
+// import { getCommentList } from '@/api/comment'
 
 //通过路径获得笔记id
 const route = useRoute()
@@ -65,6 +66,13 @@ const getDetail = async id => {
   loveCount.value = response.data.data.like_count
   collectCount.value = response.data.data.collect_count
 }
+
+//通过笔记id获取评论
+// const getComment = async id => {
+//   const response = await getCommentList(id)
+//   console.log('response', response)
+//   // commentList.value = response.data.data
+// }
 
 //改变点赞状态
 const changeLoveStatus = async id => {
@@ -184,7 +192,7 @@ onUnmounted(() => {
           </div>
         </div>
         <div class="detail-footer">
-          <CommentInput :articleId="articleId" :isLoved="isLoved" :isCollected="isCollected" :loveCount="loveCount" :collectCount="collectCount" :commentCount="commentCount" :changeLoveStatus="changeLoveStatus" :changeCollectStatus="changeCollectStatus" />
+          <CommentInput :articleId="articleId" :isLoved="isLoved" :isCollected="isCollected" :loveCount="loveCount" :collectCount="collectCount" :changeLoveStatus="changeLoveStatus" :changeCollectStatus="changeCollectStatus" />
           <!-- <img src="../assets/avatar.jpg" alt="" class="comment-avatar" /> -->
           <!-- <input class="comment-box" placeholder="说点什么..." />
           <div class="love-count" @click="changeLoveStatus(articleId)">
