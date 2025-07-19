@@ -14,7 +14,7 @@ const props = defineProps({
 })
 
 // 定义当前图片索引
-const currentSlide = ref(1)
+const currentSlide = ref(0)
 
 const swiperOptions = {
   modules: [Navigation, Pagination],
@@ -30,7 +30,14 @@ const swiperOptions = {
 
 <template>
   <div class="app">
-    <div class="swiper-container">
+    <div v-if="detail.mediaType === 1" class="video-container">
+      <video 
+        :src="detail.imgUrl[0]" 
+        controls 
+        class="video"
+      ></video>
+    </div>
+    <div v-else class="swiper-container">
       <swiper v-bind="swiperOptions">
         <!-- Slide 内容 -->
         <swiper-slide v-for="(item, index) in detail.imgUrl" :key="index">
@@ -51,11 +58,31 @@ const swiperOptions = {
   height: v-bind('`${props.detail.height}px`');
   width: v-bind('`${props.detail.width}px`');
 }
+
+/* 视频容器样式 */
+.video-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+}
+
+video {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+}
+
 img {
   height: v-bind('`${props.detail.height}px`');
   width: v-bind('`${props.detail.width}px`');
   transition: all 0.2s;
 }
+
 /* 修改分页器样式 */
 :deep(.swiper-pagination),
 :deep(.swiper-button-prev),

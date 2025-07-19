@@ -18,6 +18,7 @@ const articleId = route.params.id
 
 //笔记数据
 const imgUrl = ref([])
+const mediaType = ref(0)
 const title = ref('')
 const contentDetail = ref('')
 const labels = [
@@ -59,6 +60,7 @@ const getDetail = async id => {
 
   //笔记数据
   imgUrl.value = media_urls
+  mediaType.value = response.data.data.media_type
   title.value = response.data.data.title
   contentDetail.value = response.data.data.content
   avatar.value = response.data.data.avatar
@@ -162,7 +164,8 @@ onUnmounted(() => {
           :detail="{
             height: slideHeight,
             width: slideWidth,
-            imgUrl
+            imgUrl,
+            mediaType
           }"
         />
       </div>
