@@ -7,7 +7,7 @@ const user_id = userStore.userId
 //查询是否点赞文章
 export const didLiked = async id => {
   try {
-    console.log(id, user_id)
+    // console.log(id, user_id)
 
     const response = await request.get('/article/did_liked', {
       params: {

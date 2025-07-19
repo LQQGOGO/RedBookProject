@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted} from 'vue'
 import { useRoute } from 'vue-router'
 import SlideShow from './SlideShow.vue'
 import ArticlDetail from './ArticlDetail.vue'
@@ -8,6 +8,7 @@ import { debounce } from '@/utils/tools'
 import { getItemDetail } from '@/api/itemDetail'
 import { addLike, removeLike, addCollect, removeCollect } from '@/api/addLike'
 import { didLiked, didCollected} from '@/api/user'
+import CommentInput from '@/components/CommentInput.vue'
 
 //通过路径获得笔记id
 const route = useRoute()
@@ -49,7 +50,7 @@ const getDetail = async id => {
   const response = await getItemDetail(id)
   const didLikedResponse = await didLiked(id)
   const didCollectedResponse = await didCollected(id)
-  console.log(response)
+  console.log('response', response)
   const media_urls = JSON.parse(response.data.data.media_urls).map(item => item.url)
   // console.log(media_urls)
   isLoved.value = didLikedResponse.data
@@ -127,10 +128,6 @@ const handleResize = debounce(() => {
 onMounted(() => {
   //调用笔记详情接口，获得笔记详情
   getDetail(articleId)
-  nextTick(() => {
-    console.log(isLoved.value, isCollected.value)
-  })
-  console.log(isLoved.value, isCollected.value)
 
   //在挂载的时候记录轮播图的宽高
   slideHeight.value = slideShow.value.clientHeight
@@ -183,12 +180,13 @@ onUnmounted(() => {
             />
           </div>
           <div class="comment-container" ref="commentContainer">
-            <CommentContainer :height="commentHeight" />
+            <CommentContainer :height="commentHeight" :id="articleId" />
           </div>
         </div>
         <div class="detail-footer">
-          <img src="../assets/avatar.jpg" alt="" class="comment-avatar" />
-          <input class="comment-box" placeholder="说点什么..." />
+          <CommentInput :articleId="articleId" :isLoved="isLoved" :isCollected="isCollected" :loveCount="loveCount" :collectCount="collectCount" :commentCount="commentCount" :changeLoveStatus="changeLoveStatus" :changeCollectStatus="changeCollectStatus" />
+          <!-- <img src="../assets/avatar.jpg" alt="" class="comment-avatar" /> -->
+          <!-- <input class="comment-box" placeholder="说点什么..." />
           <div class="love-count" @click="changeLoveStatus(articleId)">
             <svg
               v-if="isLoved"
@@ -297,7 +295,7 @@ onUnmounted(() => {
                 p-id="10788"
               ></path>
             </svg>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -380,13 +378,7 @@ onUnmounted(() => {
   border-top: 1px solid gainsboro;
 }
 .detail-footer {
-  position: relative;
-  display: flex;
-  width: 100%;
-  height: 10%;
-  justify-content: space-evenly;
-  font-size: 15px;
-  align-items: center;
+  padding: 15px;
 }
 .comment-avatar {
   position: absolute;
@@ -397,8 +389,8 @@ onUnmounted(() => {
 }
 .comment-box {
   background-color: #f7f7f7;
+  padding: 10px;
   height: 40px;
-  text-indent: 50px;
   border-radius: calc(20px);
 }
 .icon {
