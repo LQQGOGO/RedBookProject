@@ -22,7 +22,8 @@ const channels = [
   'household',
   'game',
   'travel',
-  'fitness'
+  'fitness',
+  'other'
 ]
 const navs = [
   '推荐',
@@ -35,7 +36,8 @@ const navs = [
   '家居',
   '游戏',
   '旅行',
-  '健身'
+  '健身',
+  '其他'
 ]
 
 const route = useRoute()
@@ -49,17 +51,20 @@ const getData = async (page, pageSize) => {
   if (!response || !response.data) {
     throw new Error('接口返回的数据格式错误')
   }
+
   const newData = response.data.map(i => ({
-    id: i.note_id,
+    id: i.id,
     url: i.cover,
-    width: i.width,
-    height: i.height,
+    width: i.cover_width,
+    height: i.cover_height,
     title: i.title,
     author: i.nickname,
-    likes: i.liked_count,
-    isLiked: i.liked,
+    likes: i.like_count,
+    // isLiked: i.liked,
     avatar: i.avatar
   }))
+  console.log('newData', newData);
+
 
   itemStore.appendNotes(newData) // 追加到全局状态
   return newData
@@ -114,7 +119,6 @@ watch(
                 title: item.title,
                 author: item.author,
                 likes: item.likes,
-                isLiked: item.isLiked,
                 cover: item.url,
                 avatar: item.avatar,
                 id: item.id

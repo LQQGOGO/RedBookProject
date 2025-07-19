@@ -38,11 +38,14 @@ const groupOptions = [
 const categoryOptions = [
   { label: '美食', value: 'food' },
   { label: '穿搭', value: 'fashion' },
-  { label: '美妆', value: 'beauty' },
-  { label: '家居', value: 'home' },
-  { label: '宠物', value: 'pet' },
+  { label: '美妆', value: 'cosmetics' },
+  { label: '家居', value: 'household' },
+  { label: '游戏', value: 'game' },
   { label: '旅行', value: 'travel' },
   { label: '摄影', value: 'photography' },
+  { label: '职场', value: 'career' },
+  { label: '健身', value: 'fitness' },
+  { label: '情感', value: 'love' },
   { label: '其他', value: 'other' }
 ]
 const router = useRouter()

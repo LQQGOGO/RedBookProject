@@ -1,31 +1,31 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import SlideShow from './SlideShow.vue'
 import ArticlDetail from './ArticlDetail.vue'
 import CommentContainer from '@/components/CommentContainer.vue'
 import { debounce } from '@/utils/tools'
 import { getItemDetail } from '@/api/itemDetail'
-import { changeLove } from '@/api/addLike'
+import { addLike, removeLike, addCollect, removeCollect } from '@/api/addLike'
+import { didLiked, didCollected} from '@/api/user'
 
 //通过路径获得笔记id
 const route = useRoute()
 const articleId = route.params.id
+// console.log(articleId)
 
-//准备数据
-const imgUrl = [
-  'http://gips3.baidu.com/it/u=1821127123,1149655687&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280',
-  'http://gips0.baidu.com/it/u=3602773692,1512483864&fm=3028&app=3028&f=JPEG&fmt=auto?w=960&h=1280',
-  'http://gips1.baidu.com/it/u=3874647369,3220417986&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280'
-]
-const title = '快拿去骚扰你朋友哈哈哈'
-const contentDetail = '3.26有病表情包'
+//笔记数据
+const imgUrl = ref([])
+const title = ref('')
+const contentDetail = ref('')
 const labels = [
   '#适合发给男朋友的表情包',
   '#奇奇怪怪表情包',
   '#搞笑表情包分享',
   '#有趣的表情包'
 ]
+const avatar = ref('')
+const author = ref('')
 const date = '12-2'
 const location = '北极'
 const detailWidth = ref()
@@ -39,39 +39,65 @@ const commentContainer = ref(null)
 const articlDetail = ref(null)
 const detailContainer = ref(null)
 
-const isLoved = ref(0)
+const isLoved = ref(false)
 const loveCount = ref()
-const isCollected = ref(0)
-const collectCount = ref(234)
+const isCollected = ref(false)
+const collectCount = ref(0)
 
 //通过笔记id获得笔记详情
 const getDetail = async id => {
   const response = await getItemDetail(id)
-  isLoved.value = response[0].liked
-  loveCount.value = response[0].liked_count
+  const didLikedResponse = await didLiked(id)
+  const didCollectedResponse = await didCollected(id)
+  console.log(response)
+  const media_urls = JSON.parse(response.data.data.media_urls).map(item => item.url)
+  // console.log(media_urls)
+  isLoved.value = didLikedResponse.data
+  isCollected.value = didCollectedResponse.data
+
+  //笔记数据
+  imgUrl.value = media_urls
+  title.value = response.data.data.title
+  contentDetail.value = response.data.data.content
+  avatar.value = response.data.data.avatar
+  author.value = response.data.data.nickname
+  loveCount.value = response.data.data.like_count
+  collectCount.value = response.data.data.collect_count
 }
 
 //改变点赞状态
 const changeLoveStatus = async id => {
-  if (isLoved.value == 0) {
+  try {
+    if (isLoved.value == 0) {
     isLoved.value = 1
     loveCount.value += 1
-    await changeLove(id)
+    await addLike(id)
   } else {
     isLoved.value = 0
     loveCount.value = Math.max(0, loveCount.value - 1)
-    await changeLove(id)
+    await removeLike(id)
+  }
+  } catch (error) {
+    console.error('点赞失败:', error)
+    throw error
   }
 }
 
 //改变收藏状态
-const changeCollectStatus = async () => {
-  if (isCollected.value == 0) {
-    isCollected.value = 1
-    collectCount.value += 1
+const changeCollectStatus = async (id) => {
+  try {
+    if (isCollected.value == 0) {
+      isCollected.value = 1
+      collectCount.value += 1
+    await addCollect(id)
   } else {
     isCollected.value = 0
-    collectCount.value = Math.max(0, collectCount.value - 1)
+      collectCount.value = Math.max(0, collectCount.value - 1)
+      await removeCollect(id)
+    }
+  } catch (error) {
+    console.error('收藏失败:', error)
+    throw error
   }
 }
 
@@ -90,9 +116,21 @@ const handleResize = debounce(() => {
     detailContainer.value.clientHeight - articlDetail.value.clientHeight
 })
 
+// onBeforeMount(async () => {
+//   const didLikedResponse = await didLiked(articleId)
+//   const didCollectedResponse = await didCollected(articleId)
+//   isLoved.value = didLikedResponse.data
+//   isCollected.value = didCollectedResponse.data
+//   console.log(isLoved.value, isCollected.value)
+// })
+
 onMounted(() => {
   //调用笔记详情接口，获得笔记详情
   getDetail(articleId)
+  nextTick(() => {
+    console.log(isLoved.value, isCollected.value)
+  })
+  console.log(isLoved.value, isCollected.value)
 
   //在挂载的时候记录轮播图的宽高
   slideHeight.value = slideShow.value.clientHeight
@@ -126,8 +164,8 @@ onUnmounted(() => {
       <div class="detail">
         <div class="detail-header">
           <div class="user">
-            <img class="avatar" src="../assets/avatar.jpg" />
-            你的名字
+            <img class="avatar" :src="avatar" />
+            {{ author }}
           </div>
           <button class="subscribe">关注</button>
         </div>
@@ -188,7 +226,7 @@ onUnmounted(() => {
             </svg>
             <span class="numbers">{{ loveCount }}</span>
           </div>
-          <div class="collect-count" @click="changeCollectStatus()">
+          <div class="collect-count" @click="changeCollectStatus(articleId)">
             <svg
               v-if="isCollected"
               t="1733319987018"

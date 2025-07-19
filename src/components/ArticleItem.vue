@@ -1,7 +1,7 @@
 <script setup>
 import { defineProps, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { changeLove } from '@/api/addLike'
+// import { addLike, removeLike } from '@/api/addLike'
 
 const props = defineProps({
   detail: {
@@ -16,20 +16,20 @@ const articleDetail = () => {
   router.push(`/explore/${props.detail.id}`)
 }
 
-const isLoved = ref(props.detail.isLiked)
+// const isLoved = ref(props.detail.isLiked)
 const loveCount = ref(props.detail.likes)
 //改变点赞状态
-const changeLoveStatus = async id => {
-  if (isLoved.value == 0) {
-    isLoved.value = 1
-    loveCount.value += 1
-    await changeLove(id)
-  } else {
-    isLoved.value = 0
-    loveCount.value = Math.max(0, loveCount.value - 1)
-    await changeLove(id)
-  }
-}
+// const addLikeStatus = async id => {
+//   if (isLoved.value == 0) {
+//     isLoved.value = 1
+//     loveCount.value += 1
+//     await addLike(id)
+//   } else {
+//     isLoved.value = 0
+//     loveCount.value = Math.max(0, loveCount.value - 1)
+//     await addLike(id)
+//   }
+// }
 </script>
 <template>
   <div class="article">
@@ -47,8 +47,8 @@ const changeLoveStatus = async id => {
           <img :src="detail.avatar" alt="" />
           {{ detail.author }}
         </div>
-        <div class="loves" @click="changeLoveStatus(props.detail.id)">
-          <svg
+        <div class="loves">
+          <!-- <svg
             v-if="isLoved"
             t="1733319880680"
             class="icon loved"
@@ -64,9 +64,8 @@ const changeLoveStatus = async id => {
               fill="#f7f7f7"
               p-id="4700"
             ></path>
-          </svg>
+          </svg> -->
           <svg
-            v-else
             t="1733319850928"
             class="icon"
             viewBox="0 0 1024 1024"

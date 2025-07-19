@@ -1,13 +1,13 @@
 import request from '@/utils/request'
 
 export const getItemDetail = async (
-  note_id,
+  id,
 ) => {
   try {
-    const response = await request.get('/item/item_detail', {
+    const response = await request.get('/article/detail', {
       params: {
         // 传递笔记id
-        note_id
+        id
       },
       headers: {
         platform: 'H5',
