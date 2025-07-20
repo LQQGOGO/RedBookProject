@@ -82,3 +82,21 @@ export const getCollectedArticles = async user_id => {
     throw error
   }
 }
+
+//获取用户信息
+export const getUserInfo = async () => {
+  try {
+    const response = await request.get('/user/info', {
+      params: {
+        userId: user_id
+      },
+      headers: {
+        platform: 'H5'
+      }
+    })
+    return response.data
+  } catch (error) {
+    console.error('请求失败:', error)
+    throw error
+  }
+}

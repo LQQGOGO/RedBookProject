@@ -1,8 +1,9 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import LoveWaterfall from './LoveWaterfall.vue'
 import ArticleItem from '@/components/ArticleItem.vue'
 import { getLoveList, getCollectList } from '@/api/loveList'
+import { getUserInfo } from '@/api/user'
 
 const column = ref(5)
 
@@ -46,14 +47,21 @@ const getCollectData = async () => {
 }
 
 const isLike = ref(true)
+
+const userInfo = ref(null)
+
+onMounted(async () => {
+  const res = await getUserInfo()
+  userInfo.value = res.data
+})
 </script>
 
 <template>
   <div class="userinfo-container">
-    <img src="../../assets/avatar.jpg" class="avatar" />
+    <img :src="userInfo.avatar" class="avatar" />
     <div class="container">
-      <div class="nickname">带钱跑路</div>
-      <div class="userid">小红书号：3421788149322</div>
+      <div class="nickname">{{ userInfo.nickname }}</div>
+      <div class="userid">小红书号：{{ userInfo.id }}</div>
       <div class="readme">还没有简介</div>
       <div class="loveinfo">
         <span class="num">2</span>关注 <span class="num">1</span>粉丝
