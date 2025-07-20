@@ -1,4 +1,7 @@
 <script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 //实现点击li跳转链接
 const navigateToLink = event => {
   // 判断点击的是 li 或 li 内部的元素
@@ -11,6 +14,13 @@ const navigateToLink = event => {
     }
   }
 }
+
+//实现搜索跳转
+const searchInput = ref('')
+const search = () => {
+  // console.log(searchInput.value)
+  router.push(`/search?q=${searchInput.value}`)
+}
 </script>
 
 <template>
@@ -20,7 +30,7 @@ const navigateToLink = event => {
         <img class="logo" src="@/assets/logo.png" alt="" />
       </a>
       <div class="search">
-        <input type="text" placeholder="搜索小红书" />
+        <input type="text" v-model="searchInput" placeholder="搜索小红书" />
         <svg
           t="1731068684182"
           class="icon"
@@ -30,6 +40,7 @@ const navigateToLink = event => {
           p-id="2387"
           width="200"
           height="200"
+          @click="search"
         >
           <path
             d="M401.271618 64.685719a335.31276 335.31276 0 1 1-126.692351 24.641081A335.55533 335.55533 0 0 1 401.271618 64.685719m0-64.685365a399.967803 399.967803 0 0 0-283.736289 117.535329c-156.659868 156.659868-156.659868 410.772281 0 567.472577a401.251404 401.251404 0 0 0 567.472577 0c156.659868-156.659868 156.659868-410.772281 0-567.472577A399.988018 399.988018 0 0 0 401.271618 0.000354z"

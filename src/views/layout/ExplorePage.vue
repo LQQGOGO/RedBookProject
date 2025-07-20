@@ -46,7 +46,7 @@ const currentChannel = ref(route.query.channel || itemStore.channel || 'recommen
 
 //调用接口获得新数据
 const getData = async (page, pageSize) => {
-  const response = await getItemList(page, pageSize, currentChannel.value)
+  const response = await getItemList({page, pageSize, category: currentChannel.value})
 
   if (!response || !response.data) {
     throw new Error('接口返回的数据格式错误')

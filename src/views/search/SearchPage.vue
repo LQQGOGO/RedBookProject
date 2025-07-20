@@ -1,3 +1,81 @@
+<script setup>
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+import RedBookWaterfall from '@/views/layout/RedBookWaterfall.vue'
+import ArticleItem from '@/components/ArticleItem.vue'
+import { getItemList } from '@/api/itemList'
+import { useItemStore } from '@/stores/itemList';
+
+const route = useRoute()
+const searchInput = ref(route.query.q || '')
+const column = ref(2)
+const currentChannel = ref('')
+const flistRef = ref(null)
+const itemStore = useItemStore()
+
+const getData = async () => {
+  console.log('searchInput', searchInput.value);
+  const response = await getItemList({title: searchInput.value, content: searchInput.value, category: searchInput.value})
+  if (!response || !response.data) {
+    throw new Error('接口返回的数据格式错误')
+  }
+
+  const newData = response.data.map(i => ({
+    id: i.id,
+    url: i.cover,
+    width: i.cover_width,
+    height: i.cover_height,
+    title: i.title,
+    author: i.nickname,
+    likes: i.like_count,
+    // isLiked: i.liked,
+    avatar: i.avatar
+  }))
+  console.log('newData', newData);
+
+
+  itemStore.appendNotes(newData) // 追加到全局状态
+  return newData
+}
+</script>
+
 <template>
-  搜索
+  <div class="search-container">
+    <RedBookWaterfall
+          :column="column"
+          :gap="20"
+          :page-size="20"
+          :request="getData"
+          :enter-size="column * 2"
+          :channel="currentChannel"
+          ref="flistRef"
+        >
+          <template #item="{ item, imageHeight, width }">
+            <ArticleItem
+              :detail="{
+                imageHeight,
+                width,
+                title: item.title,
+                author: item.author,
+                likes: item.likes,
+                cover: item.url,
+                avatar: item.avatar,
+                id: item.id
+              }"
+            >
+            </ArticleItem>
+          </template>
+        </RedBookWaterfall>
+  </div>
 </template>
+
+<style scoped>
+.search-container {
+  width: 100%;
+  height: 100%;
+  background-color: #f0f0f0;
+}
+.search-header {
+  font-size: 80px;
+}
+</style>

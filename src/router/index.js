@@ -29,12 +29,12 @@ const router = createRouter({
         {
           path: 'user',
           component: () => import('@/views/layout/UserPage.vue')
+        },
+        {
+          path: 'search',
+          component: () => import('@/views/search/SearchPage.vue')
         }
       ]
-    },
-    {
-      path: '/search',
-      component: () => import('@/views/search/SearchPage.vue')
     }
   ]
 })

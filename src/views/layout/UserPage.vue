@@ -48,7 +48,7 @@ const getCollectData = async () => {
 
 const isLike = ref(true)
 
-const userInfo = ref(null)
+const userInfo = ref({})
 
 onMounted(async () => {
   const res = await getUserInfo()
