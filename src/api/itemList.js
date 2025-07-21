@@ -2,6 +2,7 @@ import request from '@/utils/request'
 
 export const getItemList = async (options) => {
   try {
+    // console.log('options', options)
     const response = await request.get('/article/list', {
       params: {
         // 传递分页参数

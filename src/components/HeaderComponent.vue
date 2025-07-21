@@ -20,6 +20,7 @@ const searchInput = ref('')
 const search = () => {
   // console.log(searchInput.value)
   router.push(`/search?q=${searchInput.value}`)
+  searchInput.value = ''
 }
 </script>
 

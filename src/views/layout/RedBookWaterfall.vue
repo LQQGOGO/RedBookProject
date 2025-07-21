@@ -119,7 +119,7 @@ const setItemSize = () => {
     const rect = itemSizeInfo.value.get(current.id)
     pre.set(current.id, {
       width: itemWidth,
-      height: rect ? rect.height : itemWidth * 0.75,
+      height: rect ? rect.height : itemWidth * 1.25,
       imageHeight: Math.floor((itemWidth * current.height) / current.width)
     })
     return pre
@@ -175,6 +175,8 @@ const generatorItem = (item, before, index) => {
 const loadDataList = async () => {
   if (dataState.isFinish) return
   dataState.loading = true
+  // console.log('发送请求');
+
   const list = await props.request(dataState.currentPage++, props.pageSize)
   if (!list.length) {
     dataState.isFinish = true
@@ -323,7 +325,7 @@ watch(
 const init = async () => {
   //记录频道信息
   itemStore.saveChannel(props.channel)
-  
+
   await nextTick() // 等待 DOM 完全挂载
   if (!containerRef.value) {
     console.error('获取容器失败')
