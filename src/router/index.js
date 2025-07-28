@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { validateToken } from '@/api/validate'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,10 +40,18 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach(to => {
+router.beforeEach(async to => {
   const userStore = useUserStore()
+  console.log(userStore.token)
   if (!userStore.token && to.path !== '/login') {
     return '/login'
+  }
+  if(userStore.token && to.path !== '/login') {
+    const res = await validateToken(userStore.token)
+    console.log(res)
+    if(res.code !== 200) {
+      return '/login'
+    }
   }
 })
 

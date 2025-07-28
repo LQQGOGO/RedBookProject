@@ -1,5 +1,6 @@
 import request from '@/utils/request'
 // import SparkMD5 from 'spark-md5'
+// import * as sparkMD5 from 'spark-md5'
 
 // 预设切片大小 2MB
 const CHUNK_SIZE = 1024 * 1024 * 2
@@ -58,6 +59,60 @@ const calculateFileHash = (file, onProgress) => {
     }
   })
 }
+
+// 计算文件哈希（不使用Web Worker）
+// const calculateFileHash = (file, onProgress) => {
+//   return new Promise((resolve, reject) => {
+//     const chunkSize = 1024 * 1024; // 1MB，可根据需要调整
+//     const chunks = Math.ceil(file.size / chunkSize);
+//     let currentChunk = 0;
+//     const spark = new sparkMD5.ArrayBuffer();
+//     const fileReader = new FileReader();
+
+//     // 处理每个文件块读取完成的回调
+//     fileReader.onload = (e) => {
+//       if (!e.target || !e.target.result) {
+//         reject(new Error('读取文件失败'));
+//         return;
+//       }
+
+//       // 更新哈希计算
+//       spark.append(e.target.result);
+//       currentChunk++;
+
+//       // 计算并报告进度
+//       const progress = Math.round((currentChunk / chunks) * 100);
+//       onProgress && onProgress(progress);
+
+//       // 如果还有更多块，继续读取
+//       if (currentChunk < chunks) {
+//         loadNextChunk();
+//       } else {
+//         // 所有块处理完毕，计算最终哈希
+//         const hash = spark.end();
+//         resolve(hash);
+//       }
+//     };
+
+//     // 处理读取错误
+//     fileReader.onerror = () => {
+//       reject(new Error('读取文件时发生错误'));
+//     };
+
+//     // 加载下一个文件块
+//     const loadNextChunk = () => {
+//       const start = currentChunk * chunkSize;
+//       const end = Math.min(start + chunkSize, file.size);
+
+//       // 读取文件块
+//       const chunk = file.slice(start, end);
+//       fileReader.readAsArrayBuffer(chunk);
+//     };
+
+//     // 开始处理第一个块
+//     loadNextChunk();
+//   });
+// };
 
 //上传单个切片
 const uploadChunk = async (chunk, fileHash, fileName) => {
