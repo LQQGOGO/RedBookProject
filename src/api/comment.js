@@ -1,10 +1,6 @@
 import request from '@/utils/request'
 import { useUserStore } from '@/stores/user'
 
-const userStore = useUserStore()
-
-const userId = userStore.userId
-
 export const getCommentList = async (id) => {
   try {
     const response = await request.get('/comment/list', {
@@ -20,11 +16,12 @@ export const getCommentList = async (id) => {
 
 export const createComment = async (id, content) => {
   try {
+    const userStore = useUserStore()
     console.log(typeof id)
     const response = await request.post('/comment/create', {
       articleId: id,
       content: content,
-      userId: userId
+      userId: userStore.userId
     })
     return response.data
   } catch (error) {

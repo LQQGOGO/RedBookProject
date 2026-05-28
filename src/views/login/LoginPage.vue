@@ -22,16 +22,16 @@ const rules = {
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
     {
-      pattern: /^\S{6}$/,
-      message: '密码不符合规则',
+      pattern: /^\S{6,12}$/,
+      message: '密码必须是6-12位非空字符',
       trigger: 'blur'
     }
   ],
   repassword: [
     { required: true, message: '请再次输入密码', trigger: 'blur' },
     {
-      pattern: /^\S{6,15}$/,
-      message: '密码必须是6-15的非空字符',
+      pattern: /^\S{6,12}$/,
+      message: '密码必须是6-12位非空字符',
       trigger: 'blur'
     },
     {
@@ -65,7 +65,7 @@ const register = async () => {
     // 检查响应状态是否为 200
     if (response.code === 200) {
       ElMessage.success(response.message || '注册成功')
-      setInterval(() => {
+      setTimeout(() => {
         isRegister.value = false
       }, 1000)
     } else {

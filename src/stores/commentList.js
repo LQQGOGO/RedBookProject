@@ -12,7 +12,7 @@ export const useCommentListStore = defineStore('commentList', () => {
   }
   const setNewCommentList = async (id) => {
     const response = await getCommentList(id)
-    commentList.value = response.data.data
+    commentList.value = response.data?.data || response.data || []
   }
   return { commentList, setCommentList, clearCommentList, setNewCommentList }
 })

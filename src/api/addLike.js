@@ -1,18 +1,15 @@
 import request from '@/utils/request'
 import { useUserStore } from '@/stores/user'
-const userStore = useUserStore()
-
-const userId = userStore.userId
 
 // 添加点赞
 export const addLike = async (id) => {
   try {
-    console.log(id, userId)
+    const userStore = useUserStore()
     const response = await request.post(
       '/article/like',
       {
         id: id,
-        userId: userId
+        userId: userStore.userId
       },
       {
         headers: {
@@ -31,11 +28,12 @@ export const addLike = async (id) => {
 // 取消点赞
 export const removeLike = async (id) => {
   try {
+    const userStore = useUserStore()
     const response = await request.post(
       '/article/cancel_like',
       {
         id: id,
-        userId: userId
+        userId: userStore.userId
       },
       {
         headers: {
@@ -54,11 +52,12 @@ export const removeLike = async (id) => {
 //添加收藏
 export const addCollect = async (id) => {
   try {
+    const userStore = useUserStore()
     const response = await request.post(
       '/article/collect',
       {
         id: id,
-        userId: userId
+        userId: userStore.userId
       },
       {
         headers: {
@@ -77,11 +76,12 @@ export const addCollect = async (id) => {
 //取消收藏
 export const removeCollect = async (id) => {
   try {
+    const userStore = useUserStore()
     const response = await request.post(
       '/article/cancel_collect',
       {
         id: id,
-        userId: userId
+        userId: userStore.userId
       },
       {
         headers: {

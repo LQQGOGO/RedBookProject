@@ -1,18 +1,16 @@
 import request from '@/utils/request'
 import { useUserStore } from '@/stores/user'
-const userStore = useUserStore()
-
-const user_id = userStore.userId
 
 //查询是否点赞文章
 export const didLiked = async id => {
   try {
+    const userStore = useUserStore()
     // console.log(id, user_id)
 
     const response = await request.get('/article/did_liked', {
       params: {
         id: id,
-        userId: user_id
+        userId: userStore.userId
       },
       headers: {
         platform: 'H5'
@@ -28,10 +26,11 @@ export const didLiked = async id => {
 //查询是否收藏文章
 export const didCollected = async id => {
   try {
+    const userStore = useUserStore()
     const response = await request.get('/article/did_collected', {
       params: {
         id: id,
-        userId: user_id
+        userId: userStore.userId
       },
       headers: {
         platform: 'H5'
@@ -86,9 +85,10 @@ export const getCollectedArticles = async user_id => {
 //获取用户信息
 export const getUserInfo = async () => {
   try {
+    const userStore = useUserStore()
     const response = await request.get('/user/info', {
       params: {
-        userId: user_id
+        userId: userStore.userId
       },
       headers: {
         platform: 'H5'

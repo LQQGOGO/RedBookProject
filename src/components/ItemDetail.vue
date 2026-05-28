@@ -53,20 +53,21 @@ const getDetail = async id => {
   const didLikedResponse = await didLiked(id)
   const didCollectedResponse = await didCollected(id)
   console.log('response', response)
-  const media_urls = JSON.parse(response.data.data.media_urls).map(item => item.url)
+  const detail = response.data?.data || response.data
+  const media_urls = JSON.parse(detail.media_urls || '[]').map(item => item.url)
   // console.log(media_urls)
-  isLoved.value = didLikedResponse.data
-  isCollected.value = didCollectedResponse.data
+  isLoved.value = Boolean(didLikedResponse.data)
+  isCollected.value = Boolean(didCollectedResponse.data)
 
   //笔记数据
   imgUrl.value = media_urls
-  mediaType.value = response.data.data.media_type
-  title.value = response.data.data.title
-  contentDetail.value = response.data.data.content
-  avatar.value = response.data.data.avatar
-  author.value = response.data.data.nickname
-  loveCount.value = response.data.data.like_count
-  collectCount.value = response.data.data.collect_count
+  mediaType.value = Number(detail.media_type)
+  title.value = detail.title
+  contentDetail.value = detail.content
+  avatar.value = detail.avatar
+  author.value = detail.nickname
+  loveCount.value = detail.like_count
+  collectCount.value = detail.collect_count
 }
 
 //通过笔记id获取评论
@@ -79,12 +80,12 @@ const getDetail = async id => {
 //改变点赞状态
 const changeLoveStatus = async id => {
   try {
-    if (isLoved.value == 0) {
-    isLoved.value = 1
+    if (!isLoved.value) {
+    isLoved.value = true
     loveCount.value += 1
     await addLike(id)
   } else {
-    isLoved.value = 0
+    isLoved.value = false
     loveCount.value = Math.max(0, loveCount.value - 1)
     await removeLike(id)
   }
@@ -97,12 +98,12 @@ const changeLoveStatus = async id => {
 //改变收藏状态
 const changeCollectStatus = async (id) => {
   try {
-    if (isCollected.value == 0) {
-      isCollected.value = 1
+    if (!isCollected.value) {
+      isCollected.value = true
       collectCount.value += 1
     await addCollect(id)
   } else {
-    isCollected.value = 0
+    isCollected.value = false
       collectCount.value = Math.max(0, collectCount.value - 1)
       await removeCollect(id)
     }
