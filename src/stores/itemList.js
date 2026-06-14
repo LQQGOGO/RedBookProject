@@ -24,6 +24,13 @@ export const useItemStore = defineStore(
       notes.value = [...notes.value, ...uniqueItems]
     }
 
+    const updateNote = (id, patch) => {
+      const targetId = Number(id)
+      notes.value = notes.value.map(item =>
+        Number(item.id) === targetId ? { ...item, ...patch } : item
+      )
+    }
+
     const isFinish = ref(false)
     const saveIsfinish = t => {
       isFinish.value = t
@@ -50,6 +57,7 @@ export const useItemStore = defineStore(
       saveCurrentPage,
       notes,
       appendNotes,
+      updateNote,
       isFinish,
       saveIsfinish,
       channel,

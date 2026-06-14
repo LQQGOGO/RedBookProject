@@ -239,7 +239,7 @@ const getUploadedChunks = async fileHash => {
       params: { fileHash }
     })
 
-    return response.data.uploadedChunks || []
+    return response.data.uploaded || response.data.uploadedChunks || []
   } catch (error) {
     console.error('检查已上传切片失败:', error)
     return []

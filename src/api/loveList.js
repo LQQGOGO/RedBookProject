@@ -1,14 +1,12 @@
 import request from '@/utils/request'
 import { useUserStore } from '@/stores/user'
 
-const userStore = useUserStore()
-const userId = userStore.userId
-
 export const getLoveList = async () => {
   try {
+    const userStore = useUserStore()
     const response = await request.get('/user/liked', {
       params: {
-        userId: userId
+        userId: userStore.userId
       },
       headers: {
         platform: 'H5',
@@ -25,9 +23,10 @@ export const getLoveList = async () => {
 
 export const getCollectList = async () => {
   try {
+    const userStore = useUserStore()
     const response = await request.get('/user/collected', {
       params: {
-        userId: userId
+        userId: userStore.userId
       },
       headers: {
         platform: 'H5',

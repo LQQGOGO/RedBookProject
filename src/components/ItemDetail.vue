@@ -9,11 +9,13 @@ import { getItemDetail } from '@/api/itemDetail'
 import { addLike, removeLike, addCollect, removeCollect } from '@/api/addLike'
 import { didLiked, didCollected} from '@/api/user'
 import CommentInput from '@/components/CommentInput.vue'
+import { useItemStore } from '@/stores/itemList'
 // import { getCommentList } from '@/api/comment'
 
 //通过路径获得笔记id
 const route = useRoute()
 const articleId = route.params.id
+const itemStore = useItemStore()
 // console.log(articleId)
 
 //笔记数据
@@ -81,14 +83,16 @@ const getDetail = async id => {
 const changeLoveStatus = async id => {
   try {
     if (!isLoved.value) {
-    isLoved.value = true
-    loveCount.value += 1
-    await addLike(id)
-  } else {
-    isLoved.value = false
-    loveCount.value = Math.max(0, loveCount.value - 1)
-    await removeLike(id)
-  }
+      isLoved.value = true
+      loveCount.value += 1
+      itemStore.updateNote(id, { likes: loveCount.value, isLiked: true })
+      await addLike(id)
+    } else {
+      isLoved.value = false
+      loveCount.value = Math.max(0, loveCount.value - 1)
+      itemStore.updateNote(id, { likes: loveCount.value, isLiked: false })
+      await removeLike(id)
+    }
   } catch (error) {
     console.error('点赞失败:', error)
     throw error

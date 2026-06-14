@@ -14,6 +14,14 @@ const props = defineProps({
   }
 })
 
+const formatCommentDate = value => {
+  if (!value) return ''
+  if (typeof value === 'string') return value.split('T')[0]
+  if (value.Time) return String(value.Time).split('T')[0]
+  if (value.time) return String(value.time).split('T')[0]
+  return ''
+}
+
 // const commentList = ref([])
 
 onMounted(async () => {
@@ -33,13 +41,13 @@ onMounted(async () => {
     <div class="comment-container">
       <div class="comment-number">共 {{ commentListStore.commentList.length }} 条评论</div>
       <div class="comment-detail" v-for="item in commentListStore.commentList" :key="item.id">
-        <img :src="item.user.avatar" class="avatar" />
+        <img :src="item.user?.avatar" class="avatar" />
         <div class="user-info">
-          <div class="nickname">{{ item.user.nickname }}</div>
+          <div class="nickname">{{ item.user?.nickname || item.user?.username || '用户' }}</div>
           <div class="content">
             {{ item.content }}
           </div>
-          <div class="time">{{ item.created_at.split('T')[0] }} 贵州</div>
+          <div class="time">{{ formatCommentDate(item.created_at) }} 贵州</div>
           <div class="footer">
             <div class="love">
               <svg

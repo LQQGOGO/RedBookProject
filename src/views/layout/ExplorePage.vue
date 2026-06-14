@@ -5,8 +5,10 @@ import RedBookWaterfall from './RedBookWaterfall.vue'
 import ArticleItem from '@/components/ArticleItem.vue'
 import { getItemList } from '@/api/itemList'
 import { useItemStore } from '@/stores/itemList'
+import { useUserStore } from '@/stores/user'
 
 const itemStore = useItemStore()
+const userStore = useUserStore()
 // const fContainerRef = ref(null)
 const column = ref(5)
 
@@ -46,7 +48,12 @@ const currentChannel = ref(route.query.channel || itemStore.channel || 'recommen
 
 //调用接口获得新数据
 const getData = async (page, pageSize) => {
-  const response = await getItemList({page, pageSize, category: currentChannel.value})
+  const response = await getItemList({
+    page,
+    pageSize,
+    category: currentChannel.value,
+    userId: userStore.userId
+  })
 
   if (!response || !response.data) {
     throw new Error('接口返回的数据格式错误')
@@ -60,7 +67,7 @@ const getData = async (page, pageSize) => {
     title: i.title,
     author: i.nickname,
     likes: i.like_count,
-    // isLiked: i.liked,
+    isLiked: i.liked,
     avatar: i.avatar
   }))
   console.log('newData', newData);
@@ -118,8 +125,9 @@ watch(
                 width,
                 title: item.title,
                 author: item.author,
-                likes: item.likes,
-                cover: item.url,
+              likes: item.likes,
+              isLiked: item.isLiked,
+              cover: item.url,
                 avatar: item.avatar,
                 id: item.id
               }"

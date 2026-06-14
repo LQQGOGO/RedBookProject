@@ -18,8 +18,12 @@ const navigateToLink = event => {
 //实现搜索跳转
 const searchInput = ref('')
 const search = () => {
-  // console.log(searchInput.value)
-  router.push(`/search?q=${searchInput.value}`)
+  const keyword = searchInput.value.trim()
+  if (!keyword) return
+  router.push({
+    path: '/search',
+    query: { q: keyword }
+  })
   searchInput.value = ''
 }
 </script>

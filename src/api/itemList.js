@@ -8,7 +8,6 @@ export const getItemList = async (options) => {
         // 传递分页参数
         page: options.page || 1,
         pageSize: options.pageSize || 20,
-        category: options.category || 'recommend',
         ...options
       },
       headers: {

@@ -22,6 +22,7 @@ const getLikeData = async () => {
     title: i.title,
     author: i.nickname,
     likes: i.like_count,
+    isLiked: true,
     avatar: i.avatar
   }))
   return newData
@@ -41,6 +42,7 @@ const getCollectData = async () => {
     title: i.title,
     author: i.nickname,
     likes: i.like_count,
+    isLiked: Boolean(i.liked),
     avatar: i.avatar
   }))
   return newData

@@ -1,7 +1,7 @@
 <script setup>
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Navigation, Pagination } from 'swiper/modules'
-import { ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
@@ -15,6 +15,14 @@ const props = defineProps({
 
 // 定义当前图片索引
 const currentSlide = ref(0)
+const imageList = computed(() =>
+  Array.isArray(props.detail.imgUrl) ? props.detail.imgUrl : []
+)
+const currentIndex = computed(() => {
+  const index = Number(currentSlide.value)
+  if (!Number.isFinite(index)) return 1
+  return Math.min(index + 1, imageList.value.length || 1)
+})
 
 const swiperOptions = {
   modules: [Navigation, Pagination],
@@ -23,9 +31,16 @@ const swiperOptions = {
   navigation: true,
   pagination: { clickable: true },
   onSlideChange: swiper => {
-    currentSlide.value = swiper.realIndex // 更新当前幻灯片索引
+    currentSlide.value = Number.isFinite(swiper.realIndex) ? swiper.realIndex : 0
   }
 }
+
+watch(
+  () => imageList.value.length,
+  () => {
+    currentSlide.value = 0
+  }
+)
 </script>
 
 <template>
@@ -40,13 +55,13 @@ const swiperOptions = {
     <div v-else class="swiper-container">
       <swiper v-bind="swiperOptions">
         <!-- Slide 内容 -->
-        <swiper-slide v-for="(item, index) in detail.imgUrl" :key="index">
+        <swiper-slide v-for="(item, index) in imageList" :key="index">
           <img :src="item" />
         </swiper-slide>
 
         <!-- 图片进度显示 -->
-        <div class="swiper-fraction">
-          {{ currentSlide + 1 }} / {{ detail.imgUrl.length }}
+        <div v-if="imageList.length" class="swiper-fraction">
+          {{ currentIndex }} / {{ imageList.length }}
         </div>
       </swiper>
     </div>

@@ -1,25 +1,27 @@
 <script setup>
-import { ref, onBeforeMount, onUnmounted } from 'vue'
+import { computed, ref, onBeforeMount, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import RedBookWaterfall from '@/views/layout/RedBookWaterfall.vue'
 import ArticleItem from '@/components/ArticleItem.vue'
 import { getItemList } from '@/api/itemList'
 import { useItemStore } from '@/stores/itemList'
+import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
 const searchInput = ref(route.query.q || '')
 const column = ref(5)
 const flistRef = ref(null)
 const itemStore = useItemStore()
-const recommend = ref('recommend')
+const userStore = useUserStore()
+const searchKey = computed(() => `search-${searchInput.value}`)
 
 const getData = async (page, pageSize) => {
   console.log('searchInput', searchInput.value)
   const response = await getItemList({
     title: searchInput.value,
-    content: searchInput.value,
     page,
-    pageSize
+    pageSize,
+    userId: userStore.userId
   })
   if (!response || !response.data) {
     throw new Error('接口返回的数据格式错误')
@@ -33,7 +35,7 @@ const getData = async (page, pageSize) => {
     title: i.title,
     author: i.nickname,
     likes: i.like_count,
-    // isLiked: i.liked,
+    isLiked: i.liked,
     avatar: i.avatar
   }))
   console.log('newData', newData)
@@ -50,6 +52,14 @@ onUnmounted(() => {
   itemStore.clearData()
 })
 
+watch(
+  () => route.query.q,
+  q => {
+    searchInput.value = q || ''
+    itemStore.clearData()
+  }
+)
+
 </script>
 
 <template>
@@ -61,7 +71,7 @@ onUnmounted(() => {
         :page-size="20"
         :request="getData"
         :enter-size="column * 2"
-        :channel="recommend"
+        :channel="searchKey"
         ref="flistRef"
       >
         <template #item="{ item, imageHeight, width }">
@@ -72,6 +82,7 @@ onUnmounted(() => {
               title: item.title,
               author: item.author,
               likes: item.likes,
+              isLiked: item.isLiked,
               cover: item.url,
               avatar: item.avatar,
               id: item.id

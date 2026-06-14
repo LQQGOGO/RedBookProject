@@ -1,7 +1,8 @@
 <script setup>
-import { defineProps, ref } from 'vue'
+import { computed, defineProps, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-// import { addLike, removeLike } from '@/api/addLike'
+import { addLike, removeLike } from '@/api/addLike'
+import { useItemStore } from '@/stores/itemList'
 
 const props = defineProps({
   detail: {
@@ -11,25 +12,59 @@ const props = defineProps({
 })
 
 const router = useRouter()
+const itemStore = useItemStore()
 
 const articleDetail = () => {
   router.push(`/explore/${props.detail.id}`)
 }
 
-// const isLoved = ref(props.detail.isLiked)
+const isLoved = ref(Boolean(props.detail.isLiked))
 const loveCount = ref(props.detail.likes)
-//改变点赞状态
-// const addLikeStatus = async id => {
-//   if (isLoved.value == 0) {
-//     isLoved.value = 1
-//     loveCount.value += 1
-//     await addLike(id)
-//   } else {
-//     isLoved.value = 0
-//     loveCount.value = Math.max(0, loveCount.value - 1)
-//     await addLike(id)
-//   }
-// }
+const nextPatch = computed(() => ({
+  likes: loveCount.value,
+  isLiked: isLoved.value
+}))
+
+watch(
+  () => props.detail.isLiked,
+  value => {
+    isLoved.value = Boolean(value)
+  }
+)
+
+watch(
+  () => props.detail.likes,
+  value => {
+    loveCount.value = value
+  }
+)
+
+const changeLikeStatus = async () => {
+  const previousLiked = isLoved.value
+  const previousCount = loveCount.value
+
+  try {
+    if (!isLoved.value) {
+      isLoved.value = true
+      loveCount.value += 1
+      itemStore.updateNote(props.detail.id, nextPatch.value)
+      await addLike(props.detail.id)
+    } else {
+      isLoved.value = false
+      loveCount.value = Math.max(0, loveCount.value - 1)
+      itemStore.updateNote(props.detail.id, nextPatch.value)
+      await removeLike(props.detail.id)
+    }
+  } catch (error) {
+    isLoved.value = previousLiked
+    loveCount.value = previousCount
+    itemStore.updateNote(props.detail.id, {
+      likes: previousCount,
+      isLiked: previousLiked
+    })
+    throw error
+  }
+}
 </script>
 <template>
   <div class="article">
@@ -47,8 +82,8 @@ const loveCount = ref(props.detail.likes)
           <img :src="detail.avatar" alt="" />
           {{ detail.author }}
         </div>
-        <div class="loves">
-          <!-- <svg
+        <div class="loves" @click.stop="changeLikeStatus">
+          <svg
             v-if="isLoved"
             t="1733319880680"
             class="icon loved"
@@ -64,8 +99,9 @@ const loveCount = ref(props.detail.likes)
               fill="#f7f7f7"
               p-id="4700"
             ></path>
-          </svg> -->
+          </svg>
           <svg
+            v-else
             t="1733319850928"
             class="icon"
             viewBox="0 0 1024 1024"
